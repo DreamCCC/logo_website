@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Build output
+frontend/.next/
+frontend/out/
+backend/__pycache__/
+__pycache__/
+*.py[cod]
+backend/.pytest_cache/
+
+# Python virtual environments
+.venv/
+backend/.venv/
+
+# Environment files
+.env
+.env.*
+!.env.example
+!frontend/.env.example
+!backend/.env.example
+
+# Uploads and generated files
+backend/uploads/
+uploads/
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
+
+# Logs
+*.log
+npm-debug.log*
