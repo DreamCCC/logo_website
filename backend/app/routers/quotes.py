@@ -63,6 +63,8 @@ async def create_quote(
     lighting_type: str | None = Form(default=None),
     color_temp: str | None = Form(default=None),
     need_installation: bool = Form(default=False),
+    installation_scene: str | None = Form(default=None),
+    installation_method: str | None = Form(default=None),
     country: str | None = Form(default=None),
     postal_code: str | None = Form(default=None),
     city: str | None = Form(default=None),
@@ -99,6 +101,8 @@ async def create_quote(
         "colorTemperature": color_temp,
         "installation": {
             "needed": need_installation,
+            "scene": installation_scene,
+            "method": installation_method,
             "country": country,
             "postalCode": postal_code,
             "city": city,

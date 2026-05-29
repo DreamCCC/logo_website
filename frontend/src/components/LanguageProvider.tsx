@@ -10,21 +10,22 @@ type LanguageContextValue = {
 };
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
+const STORAGE_KEY = "ks-logo-locale";
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(() => {
     if (typeof window !== "undefined") {
-      const stored = window.localStorage.getItem("locale");
+      const stored = window.localStorage.getItem(STORAGE_KEY);
       if (stored === "en" || stored === "de") {
         return stored;
       }
     }
-    return "en";
+    return "de";
   });
 
   const setLocale = (nextLocale: Locale) => {
     setLocaleState(nextLocale);
-    window.localStorage.setItem("locale", nextLocale);
+    window.localStorage.setItem(STORAGE_KEY, nextLocale);
   };
 
   const value = useMemo(

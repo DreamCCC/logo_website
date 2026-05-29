@@ -11,18 +11,106 @@ type QuoteResponse = {
   indicative_price_label: string;
 };
 
-const steps = [
-  "Project",
-  "Size",
-  "Material",
-  "Lighting",
-  "Logo",
-  "Installation",
-  "Confirm",
-];
+const quoteCopy = {
+  en: {
+    sidebarEyebrow: "Logo request",
+    steps: ["Project", "Size", "Material", "Lighting", "Logo", "Installation", "Confirm"],
+    projectType: "Project type",
+    application: "Application",
+    facadeLogo: "Facade logo",
+    indoorLogo: "Indoor logo wall",
+    lightbox: "Lightbox",
+    other: "Other",
+    dimensions: "Dimensions",
+    width: "Width (mm)",
+    height: "Height (mm)",
+    depth: "Depth (mm)",
+    quantity: "Quantity",
+    material: "Material",
+    acrylic: "Acrylic",
+    aluminium: "Aluminium",
+    stainless: "Stainless steel",
+    lightboxTextile: "Lightbox textile",
+    lighting: "Lighting",
+    backlit: "Backlit",
+    frontlit: "Frontlit",
+    sideLit: "Side lit",
+    none: "Non-illuminated",
+    colorTemperature: "Color temperature",
+    logoFiles: "Logo files",
+    upload: "Upload logo, reference image or PDF",
+    fileSelected: "file(s) selected",
+    referenceUrl: "Reference URL",
+    installationDelivery: "Installation and delivery",
+    installationNeeded: "Installation needed",
+    yes: "Yes",
+    no: "No",
+    installationScene: "Installation scene",
+    outdoorInstallation: "Outdoor installation",
+    indoorInstallation: "Indoor installation",
+    installationMethod: "Installation method",
+    individualLetters: "Individual letters mounted separately",
+    wholeLogoOrLightbox: "Whole logo or complete lightbox installation",
+    lettersOnMetalBeam: "Individual letters fixed on a metal crossbeam",
+    country: "Country",
+    postalCode: "Postal code",
+    city: "City",
+    confirmRequest: "Confirm request",
+    notes: "Notes",
+  },
+  de: {
+    sidebarEyebrow: "Logo-Anfrage",
+    steps: ["Projekt", "Größe", "Material", "Beleuchtung", "Logo", "Montage", "Bestätigung"],
+    projectType: "Projektart",
+    application: "Anwendung",
+    facadeLogo: "Fassadenlogo",
+    indoorLogo: "Innenraum-Logo-Wand",
+    lightbox: "Leuchtkasten",
+    other: "Sonstiges",
+    dimensions: "Abmessungen",
+    width: "Breite (mm)",
+    height: "Höhe (mm)",
+    depth: "Tiefe (mm)",
+    quantity: "Menge",
+    material: "Material",
+    acrylic: "Acryl",
+    aluminium: "Aluminium",
+    stainless: "Edelstahl",
+    lightboxTextile: "Textil-Leuchtkasten",
+    lighting: "Beleuchtung",
+    backlit: "Hinterleuchtet",
+    frontlit: "Frontbeleuchtet",
+    sideLit: "Seitlich beleuchtet",
+    none: "Nicht beleuchtet",
+    colorTemperature: "Farbtemperatur",
+    logoFiles: "Logo-Dateien",
+    upload: "Logo, Referenzbild oder PDF hochladen",
+    fileSelected: "Datei(en) ausgewählt",
+    referenceUrl: "Referenz-URL",
+    installationDelivery: "Montage und Lieferung",
+    installationNeeded: "Montage benötigt",
+    yes: "Ja",
+    no: "Nein",
+    installationScene: "Montageort",
+    outdoorInstallation: "Außenmontage",
+    indoorInstallation: "Innenmontage",
+    installationMethod: "Montageart",
+    individualLetters: "Einzelne Buchstaben separat montieren",
+    wholeLogoOrLightbox: "Gesamtes Logo oder kompletter Leuchtkasten",
+    lettersOnMetalBeam: "Einzelbuchstaben auf Metallquerträger befestigen",
+    country: "Land",
+    postalCode: "Postleitzahl",
+    city: "Stadt",
+    confirmRequest: "Anfrage bestätigen",
+    notes: "Notizen",
+  },
+} as const;
+
+const stepCount = quoteCopy.en.steps.length;
 
 export default function QuotePage() {
   const { locale, t } = useLanguage();
+  const q = quoteCopy[locale];
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,6 +126,8 @@ export default function QuotePage() {
     lighting_type: "backlit",
     color_temp: "4000K",
     need_installation: "true",
+    installation_scene: "outdoor",
+    installation_method: "individual_letters",
     country: "DE",
     postal_code: "",
     city: "",
@@ -106,12 +196,12 @@ export default function QuotePage() {
       <form onSubmit={handleSubmit} className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-[280px_1fr]">
         <aside className="rounded-[32px] border border-white/10 bg-neutral-950 p-6">
           <div className="mb-4 text-sm uppercase tracking-[0.25em] text-neutral-500">
-            Logo request
+            {q.sidebarEyebrow}
           </div>
           <h1 className="text-3xl font-light">{t.quote.title}</h1>
           <p className="mt-4 text-sm leading-6 text-neutral-400">{t.quote.intro}</p>
           <div className="mt-8 grid gap-2">
-            {steps.map((item, index) => (
+            {q.steps.map((item, index) => (
               <button
                 type="button"
                 key={item}
@@ -128,57 +218,57 @@ export default function QuotePage() {
 
         <section className="rounded-[32px] border border-white/10 bg-neutral-950 p-8">
           {step === 0 && (
-            <Panel title="Project type">
-              <Select label="Application" name="application_type" value={form.application_type} onChange={update}>
-                <option value="facade_logo">Facade logo</option>
-                <option value="indoor_logo">Indoor logo wall</option>
-                <option value="lightbox">Lightbox</option>
-                <option value="other">Other</option>
+            <Panel title={q.projectType}>
+              <Select label={q.application} name="application_type" value={form.application_type} onChange={update}>
+                <option value="facade_logo">{q.facadeLogo}</option>
+                <option value="indoor_logo">{q.indoorLogo}</option>
+                <option value="lightbox">{q.lightbox}</option>
+                <option value="other">{q.other}</option>
               </Select>
             </Panel>
           )}
 
           {step === 1 && (
-            <Panel title="Dimensions">
+            <Panel title={q.dimensions}>
               <div className="grid gap-4 md:grid-cols-2">
-                <Input label="Width (mm)" name="width_mm" value={form.width_mm} onChange={update} required />
-                <Input label="Height (mm)" name="height_mm" value={form.height_mm} onChange={update} required />
-                <Input label="Depth (mm)" name="depth_mm" value={form.depth_mm} onChange={update} />
-                <Input label="Quantity" name="quantity" value={form.quantity} onChange={update} required />
+                <Input label={q.width} name="width_mm" value={form.width_mm} onChange={update} required />
+                <Input label={q.height} name="height_mm" value={form.height_mm} onChange={update} required />
+                <Input label={q.depth} name="depth_mm" value={form.depth_mm} onChange={update} />
+                <Input label={q.quantity} name="quantity" value={form.quantity} onChange={update} required />
               </div>
             </Panel>
           )}
 
           {step === 2 && (
-            <Panel title="Material">
-              <Select label="Material" name="material" value={form.material} onChange={update}>
-                <option value="acrylic">Acrylic</option>
-                <option value="aluminium">Aluminium</option>
-                <option value="stainless">Stainless steel</option>
-                <option value="lightbox">Lightbox textile</option>
+            <Panel title={q.material}>
+              <Select label={q.material} name="material" value={form.material} onChange={update}>
+                <option value="acrylic">{q.acrylic}</option>
+                <option value="aluminium">{q.aluminium}</option>
+                <option value="stainless">{q.stainless}</option>
+                <option value="lightbox">{q.lightboxTextile}</option>
               </Select>
             </Panel>
           )}
 
           {step === 3 && (
-            <Panel title="Lighting">
+            <Panel title={q.lighting}>
               <div className="grid gap-4 md:grid-cols-2">
-                <Select label="Lighting" name="lighting_type" value={form.lighting_type} onChange={update}>
-                  <option value="backlit">Backlit</option>
-                  <option value="frontlit">Frontlit</option>
-                  <option value="side-lit">Side lit</option>
-                  <option value="none">Non-illuminated</option>
+                <Select label={q.lighting} name="lighting_type" value={form.lighting_type} onChange={update}>
+                  <option value="backlit">{q.backlit}</option>
+                  <option value="frontlit">{q.frontlit}</option>
+                  <option value="side-lit">{q.sideLit}</option>
+                  <option value="none">{q.none}</option>
                 </Select>
-                <Input label="Color temperature" name="color_temp" value={form.color_temp} onChange={update} />
+                <Input label={q.colorTemperature} name="color_temp" value={form.color_temp} onChange={update} />
               </div>
             </Panel>
           )}
 
           {step === 4 && (
-            <Panel title="Logo files">
+            <Panel title={q.logoFiles}>
               <label className="flex cursor-pointer flex-col items-center justify-center rounded-[28px] border border-dashed border-white/20 bg-black/40 p-10 text-center text-neutral-300">
                 <UploadCloud className="mb-4 text-neutral-500" size={36} />
-                Upload logo, reference image or PDF
+                {q.upload}
                 <input
                   className="hidden"
                   type="file"
@@ -186,35 +276,44 @@ export default function QuotePage() {
                   accept="image/*,application/pdf"
                   onChange={(event) => setFiles(event.target.files)}
                 />
-                {files && <span className="mt-3 text-sm text-white">{files.length} file(s) selected</span>}
+                {files && <span className="mt-3 text-sm text-white">{files.length} {q.fileSelected}</span>}
               </label>
-              <Input label="Reference URL" name="reference_url" value={form.reference_url} onChange={update} />
+              <Input label={q.referenceUrl} name="reference_url" value={form.reference_url} onChange={update} />
             </Panel>
           )}
 
           {step === 5 && (
-            <Panel title="Installation and delivery">
+            <Panel title={q.installationDelivery}>
               <div className="grid gap-4 md:grid-cols-2">
-                <Select label="Installation needed" name="need_installation" value={form.need_installation} onChange={update}>
-                  <option value="true">Yes</option>
-                  <option value="false">No</option>
+                <Select label={q.installationNeeded} name="need_installation" value={form.need_installation} onChange={update}>
+                  <option value="true">{q.yes}</option>
+                  <option value="false">{q.no}</option>
                 </Select>
-                <Input label="Country" name="country" value={form.country} onChange={update} />
-                <Input label="Postal code" name="postal_code" value={form.postal_code} onChange={update} />
-                <Input label="City" name="city" value={form.city} onChange={update} />
+                <Select label={q.installationScene} name="installation_scene" value={form.installation_scene} onChange={update}>
+                  <option value="outdoor">{q.outdoorInstallation}</option>
+                  <option value="indoor">{q.indoorInstallation}</option>
+                </Select>
+                <Select label={q.installationMethod} name="installation_method" value={form.installation_method} onChange={update}>
+                  <option value="individual_letters">{q.individualLetters}</option>
+                  <option value="whole_logo_or_lightbox">{q.wholeLogoOrLightbox}</option>
+                  <option value="letters_on_metal_beam">{q.lettersOnMetalBeam}</option>
+                </Select>
+                <Input label={q.country} name="country" value={form.country} onChange={update} />
+                <Input label={q.postalCode} name="postal_code" value={form.postal_code} onChange={update} />
+                <Input label={q.city} name="city" value={form.city} onChange={update} />
               </div>
             </Panel>
           )}
 
           {step === 6 && (
-            <Panel title="Confirm request">
+            <Panel title={q.confirmRequest}>
               <div className="rounded-[24px] bg-white p-6 text-black">
                 <div className="text-sm text-neutral-500">{t.quote.indicative}</div>
                 <div className="mt-2 text-4xl font-light">{indicative}</div>
                 <p className="mt-3 text-sm text-neutral-600">{t.quote.notBinding}</p>
               </div>
               <label className="grid gap-2 text-sm text-neutral-300">
-                Notes
+                {q.notes}
                 <textarea
                   className="min-h-28 rounded-2xl border border-white/10 bg-black px-4 py-3 text-white outline-none transition focus:border-white/40"
                   value={form.customer_notes}
@@ -234,10 +333,10 @@ export default function QuotePage() {
             >
               {t.quote.back}
             </button>
-            {step < steps.length - 1 ? (
+            {step < stepCount - 1 ? (
               <button
                 type="button"
-                onClick={() => setStep((value) => Math.min(steps.length - 1, value + 1))}
+                onClick={() => setStep((value) => Math.min(stepCount - 1, value + 1))}
                 className="rounded-2xl bg-white px-5 py-3 text-sm text-black"
               >
                 {t.quote.next}
