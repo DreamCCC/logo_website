@@ -17,10 +17,10 @@ const quoteCopy = {
     steps: ["Project", "Size", "Material", "Lighting", "Logo", "Installation", "Confirm"],
     projectType: "Project type",
     application: "Application",
-    facadeLogo: "Facade logo",
-    indoorLogo: "Indoor logo wall",
+    nonIlluminatedLogo: "Non-illuminated logo",
+    illuminatedLogo: "Illuminated logo",
     lightbox: "Lightbox",
-    other: "Other",
+    sideMountedLogo: "Side-mounted logo",
     dimensions: "Dimensions",
     width: "Width (mm)",
     height: "Height (mm)",
@@ -63,10 +63,10 @@ const quoteCopy = {
     steps: ["Projekt", "Größe", "Material", "Beleuchtung", "Logo", "Montage", "Bestätigung"],
     projectType: "Projektart",
     application: "Anwendung",
-    facadeLogo: "Fassadenlogo",
-    indoorLogo: "Innenraum-Logo-Wand",
+    nonIlluminatedLogo: "Nicht beleuchtetes Logo",
+    illuminatedLogo: "Beleuchtetes Logo",
     lightbox: "Leuchtkasten",
-    other: "Sonstiges",
+    sideMountedLogo: "Seitlich montiertes Logo",
     dimensions: "Abmessungen",
     width: "Breite (mm)",
     height: "Höhe (mm)",
@@ -117,7 +117,7 @@ export default function QuotePage() {
   const [result, setResult] = useState<QuoteResponse | null>(null);
   const [files, setFiles] = useState<FileList | null>(null);
   const [form, setForm] = useState({
-    application_type: "facade_logo",
+    application_type: "non_illuminated_logo",
     width_mm: "1200",
     height_mm: "400",
     depth_mm: "80",
@@ -136,10 +136,12 @@ export default function QuotePage() {
   });
 
   const indicative = useMemo(() => {
+    if (form.application_type === "illuminated_logo") return locale === "de" ? "ab EUR 450" : "from EUR 450";
+    if (form.application_type === "lightbox") return locale === "de" ? "ab EUR 650" : "from EUR 650";
+    if (form.application_type === "side_mounted_logo") return locale === "de" ? "ab EUR 750" : "from EUR 750";
     if (form.material === "aluminium") return locale === "de" ? "ab EUR 450" : "from EUR 450";
-    if (form.material === "lightbox") return locale === "de" ? "ab EUR 650" : "from EUR 650";
     return locale === "de" ? "ab EUR 299" : "from EUR 299";
-  }, [form.material, locale]);
+  }, [form.application_type, form.material, locale]);
 
   function update(name: string, value: string) {
     setForm((current) => ({ ...current, [name]: value }));
@@ -220,10 +222,10 @@ export default function QuotePage() {
           {step === 0 && (
             <Panel title={q.projectType}>
               <Select label={q.application} name="application_type" value={form.application_type} onChange={update}>
-                <option value="facade_logo">{q.facadeLogo}</option>
-                <option value="indoor_logo">{q.indoorLogo}</option>
+                <option value="non_illuminated_logo">{q.nonIlluminatedLogo}</option>
+                <option value="illuminated_logo">{q.illuminatedLogo}</option>
                 <option value="lightbox">{q.lightbox}</option>
-                <option value="other">{q.other}</option>
+                <option value="side_mounted_logo">{q.sideMountedLogo}</option>
               </Select>
             </Panel>
           )}

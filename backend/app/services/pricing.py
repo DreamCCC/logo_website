@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from sqlalchemy import and_, or_, select
+from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
 from app.models import StartingPriceRule
@@ -11,6 +11,13 @@ DEFAULT_BY_MATERIAL = {
     "aluminium": Decimal("450.00"),
     "stainless": Decimal("520.00"),
     "lightbox": Decimal("650.00"),
+}
+
+DEFAULT_BY_PROJECT_TYPE = {
+    "non_illuminated_logo": Decimal("299.00"),
+    "illuminated_logo": Decimal("450.00"),
+    "lightbox": Decimal("650.00"),
+    "side_mounted_logo": Decimal("750.00"),
 }
 
 
@@ -50,7 +57,10 @@ def calculate_starting_price(
             price = Decimal(rule.starting_price)
             return price, _format_label(price, locale)
 
-    price = DEFAULT_BY_MATERIAL.get((material or "").lower(), Decimal("350.00"))
+    price = DEFAULT_BY_PROJECT_TYPE.get(
+        (project_type or "").lower(),
+        DEFAULT_BY_MATERIAL.get((material or "").lower(), Decimal("350.00")),
+    )
     return price, _format_label(price, locale)
 
 

@@ -18,47 +18,54 @@ const images = {
 const systems = [
   {
     image: images.acrylic,
-    title: "Acrylic illuminated letters",
-    text: "Opal acrylic, clean LED diffusion and premium logo walls for interior and exterior brand moments.",
-  },
-  {
-    image: images.aluminium,
-    title: "Aluminium profile signage",
-    text: "Durable channel letters and trays for facade visibility, retail entrances and dealer locations.",
-  },
-  {
-    image: images.lightbox,
-    title: "Textile lightboxes",
-    text: "Large-format illuminated graphics for launch campaigns, retail walls and showroom communication.",
+    title: "Nicht beleuchtetes Logo",
+    text: "Clean acrylic, aluminium or stainless logo elements without internal illumination for indoor walls and facade applications.",
   },
   {
     image: images.facade,
-    title: "Facade logo systems",
-    text: "Backlit and frontlit logo systems coordinated with production, logistics and installation partners.",
+    title: "Beleuchtetes Logo",
+    text: "Frontlit, backlit or halo-lit logo systems with LED modules for premium brand visibility.",
+  },
+  {
+    image: images.lightbox,
+    title: "Lightbox",
+    text: "Complete illuminated lightbox solutions for retail facades, brand walls and campaign graphics.",
+  },
+  {
+    image: images.aluminium,
+    title: "Seitlich montiertes Logo",
+    text: "Side-mounted logo structures for projecting facade visibility and special mounting conditions.",
   },
 ];
 
 const catalogue = [
   {
-    id: "LW-01",
-    name: "Acrylic Logo 4000K",
+    id: "KS-01",
+    name: "Non-illuminated Logo",
     tag: "from EUR 299",
-    specs: ["Opal acrylic front", "Low-consumption LED", "Indoor or facade"],
+    specs: ["Acrylic or metal finish", "No internal lighting", "Indoor or facade"],
     image: images.acrylic,
   },
   {
-    id: "LW-02",
-    name: "Aluminium Profile 6",
+    id: "KS-02",
+    name: "Illuminated Logo",
     tag: "from EUR 450",
-    specs: ["Painted aluminium", "Frontlit or backlit", "Facade-ready"],
-    image: images.aluminium,
+    specs: ["Frontlit or backlit", "LED modules", "Facade-ready"],
+    image: images.facade,
   },
   {
-    id: "LW-03",
-    name: "Textile Lightbox",
+    id: "KS-03",
+    name: "Lightbox",
     tag: "from EUR 650",
     specs: ["Replaceable textile", "LED illumination", "Retail graphics"],
     image: images.lightbox,
+  },
+  {
+    id: "KS-04",
+    name: "Side-mounted Logo",
+    tag: "on request",
+    specs: ["Side-mounted structure", "Facade projection", "Custom mounting"],
+    image: images.aluminium,
   },
 ];
 
@@ -145,7 +152,7 @@ export default function Home() {
           eyebrow={t.sections.catalogue}
           title="Starting points for custom signage requests."
         />
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-4">
           {catalogue.map((item) => (
             <ProductCard key={item.id} item={item} />
           ))}
