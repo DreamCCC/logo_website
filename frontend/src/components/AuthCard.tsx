@@ -42,7 +42,7 @@ export function AuthCard({ mode }: { mode: AuthMode }) {
       <div className="mx-auto max-w-md rounded-[32px] border border-white/10 bg-neutral-950 p-8">
         <div className="mb-8">
           <div className="mb-3 text-sm uppercase tracking-[0.25em] text-neutral-500">
-            Logo Works
+            KS. Logo
           </div>
           <h1 className="text-4xl font-light">
             {mode === "login" ? t.auth.login : t.auth.register}

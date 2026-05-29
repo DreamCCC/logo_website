@@ -4,7 +4,7 @@ import { LanguageProvider } from "@/components/LanguageProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Logo Works | Illuminated signage portal",
+  title: "KS. Logo | Illuminated signage portal",
   description: "Customer portal for illuminated logos, signage and retail branding requests.",
 };
 

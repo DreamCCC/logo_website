@@ -20,14 +20,12 @@ export function Header() {
   return (
     <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-black/65 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-sm font-bold text-black">
-            LW.
-          </div>
-          <div>
-            <div className="text-sm font-medium tracking-wide text-white">Logo Works</div>
-            <div className="text-xs text-neutral-500">Illuminated signage portal</div>
-          </div>
+        <Link href="/" className="flex items-center">
+          <img
+            src="/KS_logo.png"
+            alt="KleinS GmbH"
+            className="h-10 w-auto object-contain md:h-12"
+          />
         </Link>
 
         <nav className="hidden items-center gap-8 text-sm text-neutral-300 md:flex">
