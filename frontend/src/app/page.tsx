@@ -69,6 +69,81 @@ const catalogue = [
   },
 ];
 
+const references = [
+  {
+    image: "/references/illuminated-exterior-logo.jpg",
+    title: "Beleuchtetes Fassadenlogo",
+    text: "Außenmontage mit klarer Markenwirkung und gleichmäßiger LED-Ausleuchtung.",
+  },
+  {
+    image: "/references/illuminated-exterior-logo-2.jpg",
+    title: "Fassadenlogo am Eingang",
+    text: "Profilbuchstaben für gut sichtbare Shop- und Fassadenbereiche.",
+  },
+  {
+    image: "/references/illuminated-interior-logo.jpg",
+    title: "Retail-Leuchtlogo innen",
+    text: "Kompaktes Leuchtlogo für Shop-Eingänge und Innenbereiche.",
+  },
+  {
+    image: "/references/illuminated-interior-logo-2.jpg",
+    title: "Innenlogo im Store",
+    text: "Leuchtkasten-Lösung für klare Markenpräsenz im Innenraum.",
+  },
+  {
+    image: "/references/non-illuminated-interior-logo.jpg",
+    title: "Nicht beleuchtetes Wandlogo",
+    text: "Saubere Logo-Elemente auf Innenwand mit präziser Material- und Farbwirkung.",
+  },
+  {
+    image: "/references/non-illuminated-interior-logo-2.jpg",
+    title: "Wandgrafik und Logo-Elemente",
+    text: "Nicht beleuchtete Innenwand-Gestaltung mit sauberer Oberflächenwirkung.",
+  },
+  {
+    image: "/references/side-mounted-logo.jpg",
+    title: "Seitlich montiertes Logo",
+    text: "Auskragendes Logo für bessere Sichtbarkeit in Laufwegen und Fassadenbereichen.",
+  },
+  {
+    image: "/references/side-mounted-logo-2.jpg",
+    title: "Seitlicher Leuchtausleger",
+    text: "Rundes Auslegerlogo mit seitlicher Befestigung und integrierter Beleuchtung.",
+  },
+  {
+    image: "/references/logo-pylon.jpg",
+    title: "Logo-Stele",
+    text: "Freistehende Logo-Stele für Außenbereiche und Standortkennzeichnung.",
+    tall: true,
+  },
+  {
+    image: "/references/logo-pylon-2.jpg",
+    title: "Außenstele am Standort",
+    text: "Freistehende Stele mit Logo und Orientierung im Eingangsbereich.",
+    tall: true,
+  },
+  {
+    image: "/references/installation-onsite.jpg",
+    title: "Montage vor Ort",
+    text: "Installation und elektrische Vorbereitung werden projektbezogen abgestimmt.",
+  },
+  {
+    image: "/references/installation-onsite-2.jpg",
+    title: "Montage und Anschluss",
+    text: "Vor-Ort-Montage mit Vorbereitung der elektrischen Anschlüsse.",
+  },
+  {
+    image: "/references/illuminated-retail-facade.jpg",
+    title: "Leuchtlogo im Retail-Bereich",
+    text: "Beleuchtete Markenfläche für Eingangsbereiche und Verkaufsflächen.",
+  },
+  {
+    image: "/references/illuminated-retail-facade-2.jpg",
+    title: "Detail eines Leuchtlogos",
+    text: "Nahaufnahme von Lichtfläche, Tiefe und sauberer Kantenausführung.",
+  },
+];
+
 export default function Home() {
   const { t } = useLanguage();
 
@@ -136,14 +211,12 @@ export default function Home() {
       <section id="references" className="mx-auto max-w-7xl px-6 pb-28">
         <SectionTitle
           eyebrow={t.sections.references}
-          title="Real spaces. Real installations. Real customer environments."
+          title="Ausgewählte Referenzen aus realen Projekten."
         />
-        <div className="grid gap-8 md:grid-cols-2">
-          <ImageCard image={images.facade} title="Facade identity" text="Illuminated logo systems for entrances, building facades and retail visibility." tall />
-          <div className="grid gap-8">
-            <ImageCard image={images.workshop} title="Production review" text="Requests are checked against material, factory and logistics constraints before final quotation." />
-            <ImageCard image={images.detail} title="Detail approval" text="Logo details, light temperature and mounting conditions are clarified before production." />
-          </div>
+        <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+          {references.map((item) => (
+            <ImageCard key={item.image} {...item} />
+          ))}
         </div>
       </section>
 
