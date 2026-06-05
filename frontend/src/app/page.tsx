@@ -69,78 +69,84 @@ const catalogue = [
   },
 ];
 
-const references = [
+const referenceGroups = [
   {
-    image: "/references/illuminated-exterior-logo.jpg",
-    title: "Beleuchtetes Fassadenlogo",
-    text: "Außenmontage mit klarer Markenwirkung und gleichmäßiger LED-Ausleuchtung.",
+    eyebrow: "01",
+    title: "Leuchtlogo innen",
+    description: "Beleuchtete Logos für Shops, Eingänge, Kassenbereiche und Innenwände.",
+    items: [
+      { image: "/references/illuminated-interior-logo.jpg", title: "Shop-Eingang", text: "Kompaktes Leuchtlogo im Retail-Bereich." },
+      { image: "/references/illuminated-interior-logo-2.jpg", title: "Innenlogo im Store", text: "Leuchtkasten-Lösung für klare Markenpräsenz." },
+      { image: "/references/illuminated-retail-facade.jpg", title: "Retail-Front innen", text: "Beleuchtete Markenfläche im Eingangsbereich." },
+      { image: "/references/illuminated-retail-facade-2.jpg", title: "Leuchtlogo-Detail", text: "Nahaufnahme von Lichtfläche und Kantenausführung." },
+      { image: "/references/illuminated-indoor-05.jpg", title: "Innenraum-Anwendung", text: "Beleuchtetes Logo für Kundenlaufwege." },
+      { image: "/references/illuminated-indoor-06.jpg", title: "Brand Wall", text: "Leuchtlogo als Fokuspunkt im Innenbereich." },
+    ],
   },
   {
-    image: "/references/illuminated-exterior-logo-2.jpg",
-    title: "Fassadenlogo am Eingang",
-    text: "Profilbuchstaben für gut sichtbare Shop- und Fassadenbereiche.",
+    eyebrow: "02",
+    title: "Leuchtlogo außen",
+    description: "Beleuchtete Fassadenlogos für Außenwirkung, Sichtbarkeit und Standortkennzeichnung.",
+    items: [
+      { image: "/references/illuminated-exterior-logo.jpg", title: "Fassadenlogo", text: "Außenmontage mit gleichmäßiger LED-Ausleuchtung." },
+      { image: "/references/illuminated-exterior-logo-2.jpg", title: "Profilbuchstaben", text: "Gut sichtbare Shop- und Fassadenbeschriftung." },
+      { image: "/references/illuminated-outdoor-03.jpg", title: "Außenlogo bei Tag", text: "Leuchtlogo für Eingangs- und Fassadenbereiche." },
+      { image: "/references/illuminated-outdoor-04.jpg", title: "Fassadenansicht", text: "Markenlogo mit klarer Fernwirkung." },
+      { image: "/references/illuminated-outdoor-05.jpg", title: "Montierte Buchstaben", text: "Einzelbuchstaben auf Außenfassade." },
+      { image: "/references/illuminated-outdoor-06.jpg", title: "Nachtwirkung", text: "Beleuchtetes Logo mit hoher Sichtbarkeit am Abend." },
+    ],
   },
   {
-    image: "/references/illuminated-interior-logo.jpg",
-    title: "Retail-Leuchtlogo innen",
-    text: "Kompaktes Leuchtlogo für Shop-Eingänge und Innenbereiche.",
+    eyebrow: "03",
+    title: "Nicht beleuchtetes Logo innen",
+    description: "Nicht beleuchtete Wandlogos, 3D-Elemente und Markenflächen für Innenräume.",
+    items: [
+      { image: "/references/non-illuminated-interior-logo.jpg", title: "Wandlogo Empfang", text: "Saubere Logo-Elemente auf Innenwand." },
+      { image: "/references/non-illuminated-interior-logo-2.jpg", title: "Wandgrafik", text: "Nicht beleuchtete Innenwand-Gestaltung." },
+      { image: "/references/non-illuminated-indoor-03.jpg", title: "Innenwand-Logo", text: "Logo-Elemente mit matter Oberflächenwirkung." },
+      { image: "/references/non-illuminated-indoor-04.jpg", title: "3D-Wandlogo", text: "Nicht beleuchtete Buchstaben im Innenraum." },
+      { image: "/references/non-illuminated-indoor-05.jpg", title: "Markenwand", text: "Logo und Wandgrafik als Raumidentität." },
+      { image: "/references/non-illuminated-indoor-06.jpg", title: "Office Branding", text: "Dezente Innenraum-Beschriftung." },
+    ],
   },
   {
-    image: "/references/illuminated-interior-logo-2.jpg",
-    title: "Innenlogo im Store",
-    text: "Leuchtkasten-Lösung für klare Markenpräsenz im Innenraum.",
+    eyebrow: "04",
+    title: "Nicht beleuchtetes Logo außen",
+    description: "Fassadenlogos ohne interne Beleuchtung, geeignet für klare Tageswirkung.",
+    items: [
+      { image: "/references/non-illuminated-outdoor-01.jpg", title: "Fassadenlogo ohne Licht", text: "Außenlogo mit klarer Formensprache." },
+      { image: "/references/non-illuminated-outdoor-02.jpg", title: "Außenbeschriftung", text: "Nicht beleuchtete Einzelbuchstaben." },
+      { image: "/references/non-illuminated-outdoor-03.jpg", title: "Großes Fassadenlogo", text: "Logoelemente auf Gebäudefassade." },
+      { image: "/references/non-illuminated-outdoor-04.jpg", title: "Gebäudekennzeichnung", text: "Nicht beleuchtete Markenfläche außen." },
+      { image: "/references/non-illuminated-outdoor-05.jpg", title: "Detail Außenlogo", text: "Material, Tiefe und Montagewirkung." },
+      { image: "/references/non-illuminated-outdoor-06.jpg", title: "Standortlogo", text: "Außenwirkung ohne integrierte Beleuchtung." },
+    ],
   },
   {
-    image: "/references/non-illuminated-interior-logo.jpg",
-    title: "Nicht beleuchtetes Wandlogo",
-    text: "Saubere Logo-Elemente auf Innenwand mit präziser Material- und Farbwirkung.",
-  },
-  {
-    image: "/references/non-illuminated-interior-logo-2.jpg",
-    title: "Wandgrafik und Logo-Elemente",
-    text: "Nicht beleuchtete Innenwand-Gestaltung mit sauberer Oberflächenwirkung.",
-  },
-  {
-    image: "/references/side-mounted-logo.jpg",
-    title: "Seitlich montiertes Logo",
-    text: "Auskragendes Logo für bessere Sichtbarkeit in Laufwegen und Fassadenbereichen.",
-  },
-  {
-    image: "/references/side-mounted-logo-2.jpg",
-    title: "Seitlicher Leuchtausleger",
-    text: "Rundes Auslegerlogo mit seitlicher Befestigung und integrierter Beleuchtung.",
-  },
-  {
-    image: "/references/logo-pylon.jpg",
+    eyebrow: "05",
     title: "Logo-Stele",
-    text: "Freistehende Logo-Stele für Außenbereiche und Standortkennzeichnung.",
-    tall: true,
+    description: "Freistehende Stelen und Pylone für Außenbereiche, Autohauser und Retail-Standorte.",
+    items: [
+      { image: "/references/logo-pylon.jpg", title: "Freistehende Logo-Stele", text: "Standortkennzeichnung im Außenbereich." },
+      { image: "/references/logo-pylon-2.jpg", title: "Außenstele am Standort", text: "Stele mit Logo und Orientierung." },
+      { image: "/references/logo-pylon-3.jpg", title: "Pylon mit Markenlogo", text: "Freistehende Lösung für Zufahrt und Eingang." },
+      { image: "/references/logo-pylon-4.jpg", title: "Standort-Pylon", text: "Großformatige Kennzeichnung im Außenraum." },
+      { image: "/references/logo-pylon-5.jpg", title: "Logo-Stele Detail", text: "Saubere Oberfläche und robuste Außenwirkung." },
+      { image: "/references/logo-pylon-6.jpg", title: "Hohe Logo-Stele", text: "Vertikale Markenpräsenz für Fernwirkung." },
+    ],
   },
   {
-    image: "/references/logo-pylon-2.jpg",
-    title: "Außenstele am Standort",
-    text: "Freistehende Stele mit Logo und Orientierung im Eingangsbereich.",
-    tall: true,
-  },
-  {
-    image: "/references/installation-onsite.jpg",
-    title: "Montage vor Ort",
-    text: "Installation und elektrische Vorbereitung werden projektbezogen abgestimmt.",
-  },
-  {
-    image: "/references/installation-onsite-2.jpg",
-    title: "Montage und Anschluss",
-    text: "Vor-Ort-Montage mit Vorbereitung der elektrischen Anschlüsse.",
-  },
-  {
-    image: "/references/illuminated-retail-facade.jpg",
-    title: "Leuchtlogo im Retail-Bereich",
-    text: "Beleuchtete Markenfläche für Eingangsbereiche und Verkaufsflächen.",
-  },
-  {
-    image: "/references/illuminated-retail-facade-2.jpg",
-    title: "Detail eines Leuchtlogos",
-    text: "Nahaufnahme von Lichtfläche, Tiefe und sauberer Kantenausführung.",
+    eyebrow: "06",
+    title: "Seitlich montiertes Logo",
+    description: "Ausleger, seitlich montierte Logos und Sonderkonstruktionen für bessere Sichtbarkeit.",
+    items: [
+      { image: "/references/side-mounted-logo.jpg", title: "Seitlich montiertes Logo", text: "Auskragendes Logo für Laufwege." },
+      { image: "/references/side-mounted-logo-2.jpg", title: "Seitlicher Leuchtausleger", text: "Rundes Auslegerlogo mit Beleuchtung." },
+      { image: "/references/side-mounted-logo-3.jpg", title: "Fassaden-Ausleger", text: "Seitliche Befestigung an der Gebäudefassade." },
+      { image: "/references/side-mounted-logo-4.jpg", title: "Auslegerkonstruktion", text: "Logo mit sichtbarer Tiefe und Trägerstruktur." },
+      { image: "/references/side-mounted-logo-5.jpg", title: "Doppelseitige Wirkung", text: "Seitlich sichtbares Logo für Kundenlaufwege." },
+      { image: "/references/side-mounted-logo-6.jpg", title: "Hängendes Seitenlogo", text: "Dezente seitliche Montage für Retail-Bereiche." },
+    ],
   },
 ];
 
@@ -211,11 +217,27 @@ export default function Home() {
       <section id="references" className="mx-auto max-w-7xl px-6 pb-28">
         <SectionTitle
           eyebrow={t.sections.references}
-          title="Ausgewählte Referenzen aus realen Projekten."
+          title="Referenzen nach Logo-Typ."
         />
-        <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-          {references.map((item) => (
-            <ImageCard key={item.image} {...item} />
+        <div className="grid gap-14">
+          {referenceGroups.map((group) => (
+            <div key={group.title} className="rounded-[34px] border border-white/10 bg-neutral-950/70 p-5 md:p-8">
+              <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                <div>
+                  <div className="mb-3 text-sm uppercase tracking-[0.25em] text-neutral-500">{group.eyebrow}</div>
+                  <h3 className="text-3xl font-light text-white md:text-4xl">{group.title}</h3>
+                  <p className="mt-4 max-w-2xl text-sm leading-6 text-neutral-400">{group.description}</p>
+                </div>
+                <div className="rounded-full border border-white/10 px-4 py-2 text-xs uppercase tracking-[0.2em] text-neutral-500">
+                  {group.items.length} Projekte
+                </div>
+              </div>
+              <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                {group.items.map((item) => (
+                  <ReferenceCard key={item.image} {...item} />
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       </section>
@@ -275,6 +297,27 @@ function ImageCard({
       <div className="absolute bottom-0 left-0 p-8">
         <h3 className="text-2xl font-light text-white">{title}</h3>
         <p className="mt-3 max-w-md text-sm leading-6 text-neutral-300">{text}</p>
+      </div>
+    </div>
+  );
+}
+
+function ReferenceCard({
+  image,
+  title,
+  text,
+}: {
+  image: string;
+  title: string;
+  text: string;
+}) {
+  return (
+    <div className="group relative h-72 overflow-hidden rounded-[26px] border border-white/10 bg-neutral-900 md:h-80">
+      <img src={image} alt={title} className="h-full w-full object-cover opacity-90 transition duration-700 group-hover:scale-105 group-hover:opacity-100" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 p-6">
+        <h4 className="text-lg font-light text-white">{title}</h4>
+        <p className="mt-2 text-sm leading-5 text-neutral-300">{text}</p>
       </div>
     </div>
   );
