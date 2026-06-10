@@ -22,9 +22,9 @@ export function Header() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-center">
           <img
-            src="/KS_logo.png"
-            alt="KleinS GmbH"
-            className="h-10 w-auto object-contain md:h-12"
+            src="/KS_mark.png"
+            alt="KS. Logo"
+            className="h-9 w-auto object-contain md:h-10"
           />
         </Link>
 
