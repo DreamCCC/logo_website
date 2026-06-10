@@ -9,7 +9,6 @@ import { useLanguage } from "./LanguageProvider";
 const navItems = [
   { key: "systems", href: "/#systems" },
   { key: "references", href: "/#references" },
-  { key: "catalogue", href: "/#catalogue" },
   { key: "process", href: "/#process" },
 ] as const;
 

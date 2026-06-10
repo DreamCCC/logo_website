@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, CheckCircle2, Ruler } from "lucide-react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 
 const images = {
@@ -38,85 +38,54 @@ const systems = [
   },
 ];
 
-const catalogue = [
-  {
-    id: "KS-01",
-    name: "Non-illuminated Logo",
-    tag: "from EUR 299",
-    specs: ["Acrylic or metal finish", "No internal lighting", "Indoor or facade"],
-    image: images.acrylic,
-  },
-  {
-    id: "KS-02",
-    name: "Illuminated Logo",
-    tag: "from EUR 450",
-    specs: ["Frontlit or backlit", "LED modules", "Facade-ready"],
-    image: images.facade,
-  },
-  {
-    id: "KS-03",
-    name: "Lightbox",
-    tag: "from EUR 650",
-    specs: ["Replaceable textile", "LED illumination", "Retail graphics"],
-    image: images.lightbox,
-  },
-  {
-    id: "KS-04",
-    name: "Side-mounted Logo",
-    tag: "on request",
-    specs: ["Side-mounted structure", "Facade projection", "Custom mounting"],
-    image: images.aluminium,
-  },
-];
-
 const referenceGroups = [
   {
     eyebrow: "01",
     title: "Leuchtlogo innen",
     description: "Innen eingesetzte Leuchtlogos für Shops, Markenwände und Retail-Flächen.",
-    items: [
-      { image: "/references/illuminated-indoor-06.jpg", title: "OMEGA Store-Display", text: "Beleuchtetes Markenlogo im Innenbereich mit kompletter Logo-Darstellung." },
-    ],
+    image: "/references/illuminated-indoor-06.jpg",
+    project: "OMEGA Store-Display",
+    text: "Beleuchtetes Markenlogo im Innenbereich mit kompletter Logo-Darstellung.",
   },
   {
     eyebrow: "02",
     title: "Leuchtlogo außen",
     description: "Außen montierte Leuchtlogos für Fassaden, Hallen und Standortkennzeichnung.",
-    items: [
-      { image: "/references/illuminated-outdoor-03.jpg", title: "Joy Logistics Fassade", text: "Großformatiges Außenlogo mit klarer Markenwirkung auf Gebäudefassade." },
-    ],
+    image: "/references/illuminated-outdoor-03.jpg",
+    project: "Joy Logistics Fassade",
+    text: "Großformatiges Außenlogo mit klarer Markenwirkung auf Gebäudefassade.",
   },
   {
     eyebrow: "03",
     title: "Nicht beleuchtetes Logo innen",
     description: "Nicht beleuchtete Wandlogos, 3D-Elemente und Markenflächen für Innenräume.",
-    items: [
-      { image: "/references/non-illuminated-interior-logo.jpg", title: "Geek+ Empfangswand", text: "Nicht beleuchtetes 3D-Logo als saubere Innenraum-Markierung." },
-    ],
+    image: "/references/non-illuminated-interior-logo.jpg",
+    project: "Geek+ Empfangswand",
+    text: "Nicht beleuchtetes 3D-Logo als saubere Innenraum-Markierung.",
   },
   {
     eyebrow: "04",
     title: "Nicht beleuchtetes Logo außen",
     description: "Fassadenlogos ohne interne Beleuchtung, geeignet für klare Tageswirkung.",
-    items: [
-      { image: "/references/non-illuminated-outdoor-06.jpg", title: "XPENG Fassadenlogo", text: "Nicht beleuchtetes Außenlogo auf Trägerfläche mit vollständiger Wortmarke." },
-    ],
+    image: "/references/non-illuminated-outdoor-06.jpg",
+    project: "XPENG Fassadenlogo",
+    text: "Nicht beleuchtetes Außenlogo auf Trägerfläche mit vollständiger Wortmarke.",
   },
   {
     eyebrow: "05",
     title: "Lightbox",
     description: "Kompakte Leuchtkästen und Box-Logos für Retail-Eingänge und Innenbereiche.",
-    items: [
-      { image: "/references/illuminated-interior-logo-2.jpg", title: "MINI SOU Leuchtkasten", text: "Quadratischer Lightbox-Aufbau mit vollständig sichtbarem Markenlogo." },
-    ],
+    image: "/references/illuminated-interior-logo-2.jpg",
+    project: "MINI SOU Leuchtkasten",
+    text: "Quadratischer Lightbox-Aufbau mit vollständig sichtbarem Markenlogo.",
   },
   {
     eyebrow: "06",
     title: "Seitlich montiertes Logo",
     description: "Ausleger, seitlich montierte Logos und Sonderkonstruktionen für bessere Sichtbarkeit.",
-    items: [
-      { image: "/references/side-mounted-logo-2.jpg", title: "POP MART Ausleger", text: "Seitlich montiertes Rundlogo mit kompletter Markenfläche und Tiefenwirkung." },
-    ],
+    image: "/references/side-mounted-logo-2.jpg",
+    project: "POP MART Ausleger",
+    text: "Seitlich montiertes Rundlogo mit kompletter Markenfläche und Tiefenwirkung.",
   },
 ];
 
@@ -187,39 +156,11 @@ export default function Home() {
       <section id="references" className="mx-auto max-w-7xl px-6 pb-28">
         <SectionTitle
           eyebrow={t.sections.references}
-          title="Referenzen nach Logo-Typ."
+          title="Referenzen und Logo-Formen."
         />
-        <div className="grid gap-14">
+        <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
           {referenceGroups.map((group) => (
-            <div key={group.title} className="rounded-[34px] border border-white/10 bg-neutral-950/70 p-5 md:p-8">
-              <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-                <div>
-                  <div className="mb-3 text-sm uppercase tracking-[0.25em] text-neutral-500">{group.eyebrow}</div>
-                  <h3 className="text-3xl font-light text-white md:text-4xl">{group.title}</h3>
-                  <p className="mt-4 max-w-2xl text-sm leading-6 text-neutral-400">{group.description}</p>
-                </div>
-                <div className="rounded-full border border-white/10 px-4 py-2 text-xs uppercase tracking-[0.2em] text-neutral-500">
-                  1 Projekt
-                </div>
-              </div>
-              <div className="grid gap-5 md:grid-cols-2">
-                {group.items.map((item) => (
-                  <ReferenceCard key={item.image} {...item} />
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="catalogue" className="mx-auto max-w-7xl px-6 pb-28">
-        <SectionTitle
-          eyebrow={t.sections.catalogue}
-          title="Starting points for custom signage requests."
-        />
-        <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-4">
-          {catalogue.map((item) => (
-            <ProductCard key={item.id} item={item} />
+            <ReferenceCard key={group.title} {...group} />
           ))}
         </div>
       </section>
@@ -274,48 +215,32 @@ function ImageCard({
 
 function ReferenceCard({
   image,
+  eyebrow,
   title,
+  project,
+  description,
   text,
 }: {
   image: string;
+  eyebrow: string;
   title: string;
+  project: string;
+  description: string;
   text: string;
-}) {
-  return (
-    <div className="group relative h-72 overflow-hidden rounded-[26px] border border-white/10 bg-neutral-900 md:h-80">
-      <img src={image} alt={title} className="h-full w-full object-cover opacity-90 transition duration-700 group-hover:scale-105 group-hover:opacity-100" />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 p-6">
-        <h4 className="text-lg font-light text-white">{title}</h4>
-        <p className="mt-2 text-sm leading-5 text-neutral-300">{text}</p>
-      </div>
-    </div>
-  );
-}
-
-function ProductCard({
-  item,
-}: {
-  item: { id: string; name: string; tag: string; specs: string[]; image: string };
 }) {
   return (
     <div className="group h-full overflow-hidden rounded-[28px] border border-white/10 bg-neutral-950 shadow-sm transition hover:-translate-y-1 hover:border-white/25">
       <div className="relative h-64 overflow-hidden bg-neutral-900">
-        <img src={item.image} alt={item.name} className="h-full w-full object-cover opacity-90 transition duration-700 group-hover:scale-105" />
+        <img src={image} alt={project} className="h-full w-full object-cover opacity-90 transition duration-700 group-hover:scale-105" />
         <div className="absolute left-4 top-4 rounded-full bg-black/60 px-3 py-1 text-xs text-white backdrop-blur">
-          #{item.id}
+          #{eyebrow}
         </div>
       </div>
       <div className="p-6">
-        <div className="mb-3 text-xs uppercase tracking-[0.2em] text-neutral-500">{item.tag}</div>
-        <h3 className="text-xl font-light text-white">{item.name}</h3>
-        <div className="mt-5 grid gap-2">
-          {item.specs.map((spec) => (
-            <div key={spec} className="flex items-center gap-2 text-sm text-neutral-400">
-              <Ruler size={15} className="text-neutral-600" /> {spec}
-            </div>
-          ))}
-        </div>
+        <div className="mb-3 text-xs uppercase tracking-[0.2em] text-neutral-500">{title}</div>
+        <h3 className="text-xl font-light text-white">{project}</h3>
+        <p className="mt-3 text-sm leading-6 text-neutral-400">{description}</p>
+        <p className="mt-4 text-sm leading-6 text-neutral-300">{text}</p>
       </div>
     </div>
   );
