@@ -11,10 +11,64 @@ type QuoteResponse = {
   indicative_price_label: string;
 };
 
+type Locale = "en" | "de";
+type ApplicationType = "non_illuminated_logo" | "illuminated_logo" | "lightbox" | "side_mounted_logo";
+type StepId = "project" | "size" | "material" | "lighting" | "logo" | "installation" | "confirm";
+
+type QuoteForm = {
+  application_type: ApplicationType;
+  width_mm: string;
+  height_mm: string;
+  depth_mm: string;
+  quantity: string;
+  material: string;
+  main_material: string;
+  edge_material: string;
+  front_cover_material: string;
+  lighting_type: string;
+  color_temp: string;
+  brightness: string;
+  need_installation: string;
+  installation_scene: string;
+  installation_method: string;
+  country: string;
+  postal_code: string;
+  city: string;
+  reference_url: string;
+  customer_notes: string;
+};
+
+type LocalizedText = Record<Locale, string>;
+type Choice = {
+  value: string;
+  label: LocalizedText;
+  description: LocalizedText;
+  image: string;
+};
+type ChoiceSection = {
+  field: keyof QuoteForm;
+  title: LocalizedText;
+  description?: LocalizedText;
+  choices: Choice[];
+};
+type ProductConfig = {
+  materialSections: ChoiceSection[];
+  lightingSections: ChoiceSection[];
+  installationMethods: Choice[];
+};
+
 const quoteCopy = {
   en: {
     sidebarEyebrow: "Logo request",
-    steps: ["Project", "Size", "Material", "Lighting", "Logo", "Installation", "Confirm"],
+    steps: {
+      project: "Project",
+      size: "Size",
+      material: "Material",
+      lighting: "Lighting",
+      logo: "Logo",
+      installation: "Installation",
+      confirm: "Confirm",
+    },
     projectType: "Project type",
     application: "Application",
     nonIlluminatedLogo: "Non-illuminated logo",
@@ -27,16 +81,25 @@ const quoteCopy = {
     depth: "Depth (mm)",
     quantity: "Quantity",
     material: "Material",
+    mainMaterial: "Logo body material",
+    edgeMaterial: "Edge / side material",
+    frontCoverMaterial: "Front cover material",
     acrylic: "Acrylic",
-    aluminium: "Aluminium",
+    aluminiumComposite: "Aluminium composite panel",
     stainless: "Stainless steel",
-    lightboxTextile: "Lightbox textile",
+    paintedWood: "Painted wood",
+    textile: "Fabric",
     lighting: "Lighting",
+    lightingType: "Lighting type",
     backlit: "Backlit",
     frontlit: "Frontlit",
     sideLit: "Side lit",
     none: "Non-illuminated",
     colorTemperature: "Color temperature",
+    brightness: "Brightness",
+    lowBrightness: "Low",
+    mediumBrightness: "Medium",
+    highBrightness: "High",
     logoFiles: "Logo files",
     upload: "Upload logo, reference image or PDF",
     fileSelected: "file(s) selected",
@@ -50,17 +113,28 @@ const quoteCopy = {
     indoorInstallation: "Indoor installation",
     installationMethod: "Installation method",
     individualLetters: "Individual letters mounted separately",
-    wholeLogoOrLightbox: "Whole logo or complete lightbox installation",
-    lettersOnMetalBeam: "Individual letters fixed on a metal crossbeam",
+    lettersOnMetalBeam: "Letters mounted on a support bar",
+    logoBackboard: "Logo mounted on a back panel",
+    metalRodSupport: "Metal rod support installation",
+    wallMountedSideLogo: "Full side sign mounted against the wall",
     country: "Country",
     postalCode: "Postal code",
     city: "City",
     confirmRequest: "Confirm request",
     notes: "Notes",
+    selectedSummary: "Selected configuration",
   },
   de: {
     sidebarEyebrow: "Logo-Anfrage",
-    steps: ["Projekt", "Größe", "Material", "Beleuchtung", "Logo", "Montage", "Bestätigung"],
+    steps: {
+      project: "Projekt",
+      size: "Größe",
+      material: "Material",
+      lighting: "Beleuchtung",
+      logo: "Logo",
+      installation: "Montage",
+      confirm: "Bestätigung",
+    },
     projectType: "Projektart",
     application: "Anwendung",
     nonIlluminatedLogo: "Nicht beleuchtetes Logo",
@@ -73,16 +147,25 @@ const quoteCopy = {
     depth: "Tiefe (mm)",
     quantity: "Menge",
     material: "Material",
+    mainMaterial: "Logo-Hauptmaterial",
+    edgeMaterial: "Kanten- / Seitenmaterial",
+    frontCoverMaterial: "Frontabdeckung",
     acrylic: "Acryl",
-    aluminium: "Aluminium",
+    aluminiumComposite: "Aluminium-Verbundplatte",
     stainless: "Edelstahl",
-    lightboxTextile: "Textil-Leuchtkasten",
+    paintedWood: "Lackiertes Holz",
+    textile: "Textil",
     lighting: "Beleuchtung",
+    lightingType: "Lichtart",
     backlit: "Hinterleuchtet",
     frontlit: "Frontbeleuchtet",
     sideLit: "Seitlich beleuchtet",
     none: "Nicht beleuchtet",
     colorTemperature: "Farbtemperatur",
+    brightness: "Helligkeit",
+    lowBrightness: "Niedrig",
+    mediumBrightness: "Mittel",
+    highBrightness: "Hoch",
     logoFiles: "Logo-Dateien",
     upload: "Logo, Referenzbild oder PDF hochladen",
     fileSelected: "Datei(en) ausgewählt",
@@ -96,17 +179,548 @@ const quoteCopy = {
     indoorInstallation: "Innenmontage",
     installationMethod: "Montageart",
     individualLetters: "Einzelne Buchstaben separat montieren",
-    wholeLogoOrLightbox: "Gesamtes Logo oder kompletter Leuchtkasten",
-    lettersOnMetalBeam: "Einzelbuchstaben auf Metallquerträger befestigen",
+    lettersOnMetalBeam: "Buchstaben auf Trägerleiste montieren",
+    logoBackboard: "Logo auf Rückwand montieren",
+    metalRodSupport: "Montage mit Metallstangen",
+    wallMountedSideLogo: "Seitenschild vollflächig an der Wand",
     country: "Land",
     postalCode: "Postleitzahl",
     city: "Stadt",
     confirmRequest: "Anfrage bestätigen",
     notes: "Notizen",
+    selectedSummary: "Ausgewählte Konfiguration",
   },
 } as const;
 
-const stepCount = quoteCopy.en.steps.length;
+type QuoteCopy = (typeof quoteCopy)[keyof typeof quoteCopy];
+
+const referenceImages = {
+  nonIlluminatedIndoor: "/references/non-illuminated-interior-logo.jpg",
+  nonIlluminatedOutdoor: "/references/non-illuminated-outdoor-06.jpg",
+  illuminatedInterior: "/references/illuminated-indoor-06.jpg",
+  illuminatedOutdoor: "/references/illuminated-outdoor-03.jpg",
+  lightbox: "/references/illuminated-interior-logo-2.jpg",
+  sideMounted: "/references/side-mounted-logo-2.jpg",
+};
+
+const productChoices: Choice[] = [
+  {
+    value: "non_illuminated_logo",
+    label: { en: "Non-illuminated logo", de: "Nicht beleuchtetes Logo" },
+    description: {
+      en: "Painted, acrylic or aluminium composite logo elements without lighting.",
+      de: "Lackierte, Acryl- oder Alu-Verbund-Logos ohne Beleuchtung.",
+    },
+    image: referenceImages.nonIlluminatedIndoor,
+  },
+  {
+    value: "illuminated_logo",
+    label: { en: "Illuminated logo", de: "Beleuchtetes Logo" },
+    description: {
+      en: "Acrylic body with selectable edge material, lighting direction and brightness.",
+      de: "Acrylkörper mit wählbarem Kantenmaterial, Lichtart und Helligkeit.",
+    },
+    image: referenceImages.illuminatedOutdoor,
+  },
+  {
+    value: "lightbox",
+    label: { en: "Lightbox", de: "Leuchtkasten" },
+    description: {
+      en: "Box construction with selectable side material and textile or acrylic front.",
+      de: "Kastenaufbau mit wählbarem Seitenmaterial und Textil- oder Acrylfront.",
+    },
+    image: referenceImages.lightbox,
+  },
+  {
+    value: "side_mounted_logo",
+    label: { en: "Side-mounted logo", de: "Seitlich montiertes Logo" },
+    description: {
+      en: "Projecting side sign with wall or rod-supported mounting.",
+      de: "Auskragendes Seitenschild mit Wand- oder Stangenmontage.",
+    },
+    image: referenceImages.sideMounted,
+  },
+];
+
+const sceneChoices: Choice[] = [
+  {
+    value: "indoor",
+    label: { en: "Indoor installation", de: "Innenmontage" },
+    description: {
+      en: "For stores, reception walls, counters and interior customer areas.",
+      de: "Für Stores, Empfangswände, Kassenbereiche und Innenflächen.",
+    },
+    image: referenceImages.illuminatedInterior,
+  },
+  {
+    value: "outdoor",
+    label: { en: "Outdoor installation", de: "Außenmontage" },
+    description: {
+      en: "For facades, entrances and exterior brand visibility.",
+      de: "Für Fassaden, Eingänge und Außenwirkung.",
+    },
+    image: referenceImages.illuminatedOutdoor,
+  },
+];
+
+const installationNeededChoices: Choice[] = [
+  {
+    value: "true",
+    label: { en: "Installation needed", de: "Montage benötigt" },
+    description: {
+      en: "Our team should include installation details in the formal quote.",
+      de: "Unser Team soll Montagedetails im verbindlichen Angebot berücksichtigen.",
+    },
+    image: referenceImages.nonIlluminatedOutdoor,
+  },
+  {
+    value: "false",
+    label: { en: "No installation needed", de: "Keine Montage benötigt" },
+    description: {
+      en: "Production and delivery only. You will organize installation separately.",
+      de: "Nur Produktion und Lieferung. Die Montage organisieren Sie separat.",
+    },
+    image: referenceImages.nonIlluminatedIndoor,
+  },
+];
+
+const sharedLogoInstallationMethods: Choice[] = [
+  {
+    value: "individual_letters",
+    label: { en: "Individual letters", de: "Einzelbuchstaben" },
+    description: {
+      en: "Each letter or logo element is mounted separately on the surface.",
+      de: "Jeder Buchstabe oder jedes Logo-Element wird separat montiert.",
+    },
+    image: referenceImages.illuminatedOutdoor,
+  },
+  {
+    value: "letters_on_metal_beam",
+    label: { en: "Support bar", de: "Trägerleiste" },
+    description: {
+      en: "Letters are pre-fixed on a straight support bar for easier installation.",
+      de: "Buchstaben werden auf einer geraden Trägerleiste vormontiert.",
+    },
+    image: referenceImages.nonIlluminatedOutdoor,
+  },
+  {
+    value: "logo_backboard",
+    label: { en: "Logo back panel", de: "Logo-Rückwand" },
+    description: {
+      en: "The logo is mounted as a complete unit on a back panel.",
+      de: "Das Logo wird als komplette Einheit auf einer Rückwand montiert.",
+    },
+    image: referenceImages.lightbox,
+  },
+];
+
+const productConfigs: Record<ApplicationType, ProductConfig> = {
+  non_illuminated_logo: {
+    materialSections: [
+      {
+        field: "main_material",
+        title: { en: "Logo body material", de: "Logo-Hauptmaterial" },
+        choices: [
+          {
+            value: "painted_wood",
+            label: { en: "Painted wood", de: "Lackiertes Holz" },
+            description: {
+              en: "Painted wooden body for warm interior or decorative logo effects.",
+              de: "Lackierter Holzkörper für warme Innenraum- oder Dekorwirkung.",
+            },
+            image: referenceImages.nonIlluminatedIndoor,
+          },
+          {
+            value: "acrylic",
+            label: { en: "Acrylic", de: "Acryl" },
+            description: {
+              en: "Clean acrylic logo elements for crisp shapes and smooth surfaces.",
+              de: "Saubere Acryl-Logoelemente mit klaren Konturen und glatter Oberfläche.",
+            },
+            image: referenceImages.nonIlluminatedIndoor,
+          },
+          {
+            value: "aluminium_composite",
+            label: { en: "Aluminium composite panel", de: "Aluminium-Verbundplatte" },
+            description: {
+              en: "Rigid panel material for outdoor facades and larger logo bodies.",
+              de: "Stabiles Plattenmaterial für Außenfassaden und größere Logoformen.",
+            },
+            image: referenceImages.nonIlluminatedOutdoor,
+          },
+        ],
+      },
+    ],
+    lightingSections: [],
+    installationMethods: sharedLogoInstallationMethods,
+  },
+  illuminated_logo: {
+    materialSections: [
+      {
+        field: "main_material",
+        title: { en: "Logo body material", de: "Logo-Hauptmaterial" },
+        description: {
+          en: "For illuminated logos, the body is acrylic by default.",
+          de: "Bei beleuchteten Logos ist der Körper standardmäßig aus Acryl.",
+        },
+        choices: [
+          {
+            value: "acrylic",
+            label: { en: "Acrylic body", de: "Acrylkörper" },
+            description: {
+              en: "Default translucent body material for reliable LED illumination.",
+              de: "Standardmaterial für gleichmäßige und zuverlässige LED-Ausleuchtung.",
+            },
+            image: referenceImages.illuminatedInterior,
+          },
+        ],
+      },
+      {
+        field: "edge_material",
+        title: { en: "Edge material", de: "Kantenmaterial" },
+        choices: [
+          {
+            value: "acrylic",
+            label: { en: "Acrylic", de: "Acryl" },
+            description: {
+              en: "Lightweight edge build for clean indoor and retail applications.",
+              de: "Leichter Kantenaufbau für saubere Innen- und Retail-Anwendungen.",
+            },
+            image: referenceImages.illuminatedInterior,
+          },
+          {
+            value: "aluminium_composite",
+            label: { en: "Aluminium composite panel", de: "Aluminium-Verbundplatte" },
+            description: {
+              en: "Stable side structure for larger logo bodies and facade use.",
+              de: "Stabile Seitenstruktur für größere Logokörper und Fassadeneinsatz.",
+            },
+            image: referenceImages.illuminatedOutdoor,
+          },
+          {
+            value: "stainless_steel",
+            label: { en: "Stainless steel", de: "Edelstahl" },
+            description: {
+              en: "Premium edge material with strong durability and clean finish.",
+              de: "Hochwertiges Kantenmaterial mit robuster und sauberer Oberfläche.",
+            },
+            image: referenceImages.nonIlluminatedOutdoor,
+          },
+        ],
+      },
+    ],
+    lightingSections: [
+      {
+        field: "lighting_type",
+        title: { en: "Lighting type", de: "Lichtart" },
+        choices: [
+          {
+            value: "backlit",
+            label: { en: "Backlit", de: "Hinterleuchtet" },
+            description: {
+              en: "Halo effect from the wall or back panel behind the logo.",
+              de: "Halo-Effekt von Wand oder Rückfläche hinter dem Logo.",
+            },
+            image: referenceImages.illuminatedOutdoor,
+          },
+          {
+            value: "frontlit",
+            label: { en: "Frontlit", de: "Frontbeleuchtet" },
+            description: {
+              en: "The logo face itself lights up for maximum readability.",
+              de: "Die Logofront leuchtet direkt für maximale Lesbarkeit.",
+            },
+            image: referenceImages.lightbox,
+          },
+          {
+            value: "side_lit",
+            label: { en: "Side lit", de: "Seitlich beleuchtet" },
+            description: {
+              en: "Light escapes through the side edge for a dimensional effect.",
+              de: "Licht tritt seitlich aus und erzeugt Tiefenwirkung.",
+            },
+            image: referenceImages.sideMounted,
+          },
+        ],
+      },
+    ],
+    installationMethods: sharedLogoInstallationMethods,
+  },
+  lightbox: {
+    materialSections: [
+      {
+        field: "edge_material",
+        title: { en: "Side material", de: "Seitenmaterial" },
+        choices: [
+          {
+            value: "stainless_steel",
+            label: { en: "Stainless steel", de: "Edelstahl" },
+            description: {
+              en: "Robust premium side material for durable box construction.",
+              de: "Robustes Premium-Seitenmaterial für langlebige Kastenbauweise.",
+            },
+            image: referenceImages.nonIlluminatedOutdoor,
+          },
+          {
+            value: "aluminium_composite",
+            label: { en: "Aluminium composite panel", de: "Aluminium-Verbundplatte" },
+            description: {
+              en: "Lightweight, stable and suitable for larger lightbox sides.",
+              de: "Leicht, stabil und geeignet für größere Leuchtkastenseiten.",
+            },
+            image: referenceImages.illuminatedOutdoor,
+          },
+          {
+            value: "acrylic",
+            label: { en: "Acrylic", de: "Acryl" },
+            description: {
+              en: "Clean side material for compact indoor lightboxes.",
+              de: "Sauberes Seitenmaterial für kompakte Indoor-Leuchtkästen.",
+            },
+            image: referenceImages.lightbox,
+          },
+        ],
+      },
+      {
+        field: "front_cover_material",
+        title: { en: "Front cover material", de: "Frontabdeckung" },
+        choices: [
+          {
+            value: "textile",
+            label: { en: "Fabric", de: "Textil" },
+            description: {
+              en: "Textile front for larger illuminated graphics and soft light.",
+              de: "Textilfront für größere Leuchtgrafiken und weiches Licht.",
+            },
+            image: referenceImages.illuminatedInterior,
+          },
+          {
+            value: "acrylic",
+            label: { en: "Acrylic", de: "Acryl" },
+            description: {
+              en: "Acrylic front for crisp logo shapes and compact boxes.",
+              de: "Acrylfront für klare Logoformen und kompakte Kästen.",
+            },
+            image: referenceImages.lightbox,
+          },
+        ],
+      },
+    ],
+    lightingSections: [],
+    installationMethods: [],
+  },
+  side_mounted_logo: {
+    materialSections: [
+      {
+        field: "edge_material",
+        title: { en: "Side material", de: "Seitenmaterial" },
+        choices: [
+          {
+            value: "stainless_steel",
+            label: { en: "Stainless steel", de: "Edelstahl" },
+            description: {
+              en: "Strong side body for visible projecting signs.",
+              de: "Starker Seitenkörper für gut sichtbare Ausleger.",
+            },
+            image: referenceImages.sideMounted,
+          },
+          {
+            value: "aluminium_composite",
+            label: { en: "Aluminium composite panel", de: "Aluminium-Verbundplatte" },
+            description: {
+              en: "Stable and lightweight side construction.",
+              de: "Stabile und leichte Seitenkonstruktion.",
+            },
+            image: referenceImages.illuminatedOutdoor,
+          },
+          {
+            value: "acrylic",
+            label: { en: "Acrylic", de: "Acryl" },
+            description: {
+              en: "Clean compact build for smaller projecting logo signs.",
+              de: "Sauberer kompakter Aufbau für kleinere Auslegerlogos.",
+            },
+            image: referenceImages.lightbox,
+          },
+        ],
+      },
+      {
+        field: "front_cover_material",
+        title: { en: "Front cover material", de: "Frontabdeckung" },
+        choices: [
+          {
+            value: "textile",
+            label: { en: "Fabric", de: "Textil" },
+            description: {
+              en: "Fabric front for larger illuminated side signs.",
+              de: "Textilfront für größere beleuchtete Seitenschilder.",
+            },
+            image: referenceImages.illuminatedInterior,
+          },
+          {
+            value: "acrylic",
+            label: { en: "Acrylic", de: "Acryl" },
+            description: {
+              en: "Acrylic front for crisp logo readability.",
+              de: "Acrylfront für klare Lesbarkeit des Logos.",
+            },
+            image: referenceImages.sideMounted,
+          },
+        ],
+      },
+    ],
+    lightingSections: [],
+    installationMethods: [
+      {
+        value: "metal_rod_support",
+        label: { en: "Metal rod support", de: "Metallstangen" },
+        description: {
+          en: "The sign projects from the facade with visible metal supports.",
+          de: "Das Schild kragt mit sichtbaren Metallstangen aus der Fassade.",
+        },
+        image: referenceImages.sideMounted,
+      },
+      {
+        value: "wall_mounted_side_logo",
+        label: { en: "Mounted against wall", de: "Direkt an der Wand" },
+        description: {
+          en: "The complete side sign sits close to the wall or facade.",
+          de: "Das komplette Seitenschild liegt nah an Wand oder Fassade.",
+        },
+        image: referenceImages.illuminatedOutdoor,
+      },
+    ],
+  },
+};
+
+const colorTemperatureSection: ChoiceSection = {
+  field: "color_temp",
+  title: { en: "Color temperature", de: "Farbtemperatur" },
+  choices: [
+    {
+      value: "3000K",
+      label: { en: "3000K warm white", de: "3000K warmweiß" },
+      description: {
+        en: "Warm tone for hospitality, boutiques and cozy interiors.",
+        de: "Warmer Ton für Gastronomie, Boutiquen und gemütliche Innenräume.",
+      },
+      image: referenceImages.lightbox,
+    },
+    {
+      value: "4500K",
+      label: { en: "4500K neutral white", de: "4500K neutralweiß" },
+      description: {
+        en: "Balanced light for most retail and office environments.",
+        de: "Ausgewogenes Licht für die meisten Retail- und Office-Umgebungen.",
+      },
+      image: referenceImages.illuminatedInterior,
+    },
+    {
+      value: "6000K",
+      label: { en: "6000K cool white", de: "6000K kaltweiß" },
+      description: {
+        en: "Cool, crisp light for high-contrast facade visibility.",
+        de: "Kühles, klares Licht für kontraststarke Fassadenwirkung.",
+      },
+      image: referenceImages.illuminatedOutdoor,
+    },
+  ],
+};
+
+const brightnessSection: ChoiceSection = {
+  field: "brightness",
+  title: { en: "Brightness", de: "Helligkeit" },
+  choices: [
+    {
+      value: "low",
+      label: { en: "Low", de: "Niedrig" },
+      description: {
+        en: "Subtle light for interiors and close viewing distances.",
+        de: "Dezentes Licht für Innenräume und kurze Betrachtungsabstände.",
+      },
+      image: referenceImages.lightbox,
+    },
+    {
+      value: "medium",
+      label: { en: "Medium", de: "Mittel" },
+      description: {
+        en: "Balanced default brightness for everyday retail visibility.",
+        de: "Ausgewogene Standardhelligkeit für alltägliche Retail-Sichtbarkeit.",
+      },
+      image: referenceImages.illuminatedInterior,
+    },
+    {
+      value: "high",
+      label: { en: "High", de: "Hoch" },
+      description: {
+        en: "Stronger brightness for outdoor facades and longer distance viewing.",
+        de: "Stärkere Helligkeit für Außenfassaden und größere Sichtweiten.",
+      },
+      image: referenceImages.illuminatedOutdoor,
+    },
+  ],
+};
+
+function getLightingSections(type: ApplicationType) {
+  const baseSections = productConfigs[type].lightingSections;
+  if (type === "non_illuminated_logo") return [];
+  return [...baseSections, colorTemperatureSection, brightnessSection];
+}
+
+function getSteps(type: ApplicationType): StepId[] {
+  const steps: StepId[] = ["project", "size", "material"];
+  if (getLightingSections(type).length > 0) steps.push("lighting");
+  return [...steps, "logo", "installation", "confirm"];
+}
+
+function getDefaultsForType(type: ApplicationType): Partial<QuoteForm> {
+  if (type === "illuminated_logo") {
+    return {
+      material: "acrylic",
+      main_material: "acrylic",
+      edge_material: "acrylic",
+      front_cover_material: "",
+      lighting_type: "backlit",
+      color_temp: "4500K",
+      brightness: "medium",
+      installation_method: "individual_letters",
+    };
+  }
+  if (type === "lightbox") {
+    return {
+      material: "stainless_steel",
+      main_material: "",
+      edge_material: "stainless_steel",
+      front_cover_material: "textile",
+      lighting_type: "lightbox",
+      color_temp: "4500K",
+      brightness: "medium",
+      installation_method: "",
+    };
+  }
+  if (type === "side_mounted_logo") {
+    return {
+      material: "stainless_steel",
+      main_material: "",
+      edge_material: "stainless_steel",
+      front_cover_material: "textile",
+      lighting_type: "lightbox",
+      color_temp: "4500K",
+      brightness: "medium",
+      installation_method: "metal_rod_support",
+    };
+  }
+  return {
+    material: "acrylic",
+    main_material: "acrylic",
+    edge_material: "",
+    front_cover_material: "",
+    lighting_type: "none",
+    color_temp: "",
+    brightness: "",
+    installation_method: "individual_letters",
+  };
+}
 
 export default function QuotePage() {
   const { locale, t } = useLanguage();
@@ -116,15 +730,19 @@ export default function QuotePage() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<QuoteResponse | null>(null);
   const [files, setFiles] = useState<FileList | null>(null);
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<QuoteForm>({
     application_type: "non_illuminated_logo",
     width_mm: "1200",
     height_mm: "400",
     depth_mm: "80",
     quantity: "1",
     material: "acrylic",
-    lighting_type: "backlit",
-    color_temp: "4000K",
+    main_material: "acrylic",
+    edge_material: "",
+    front_cover_material: "",
+    lighting_type: "none",
+    color_temp: "",
+    brightness: "",
     need_installation: "true",
     installation_scene: "outdoor",
     installation_method: "individual_letters",
@@ -135,16 +753,43 @@ export default function QuotePage() {
     customer_notes: "",
   });
 
+  const steps = getSteps(form.application_type);
+  const safeStep = Math.min(step, steps.length - 1);
+  const currentStep = steps[safeStep];
+  const currentConfig = productConfigs[form.application_type];
+  const lightingSections = getLightingSections(form.application_type);
+
   const indicative = useMemo(() => {
     if (form.application_type === "illuminated_logo") return locale === "de" ? "ab EUR 450" : "from EUR 450";
     if (form.application_type === "lightbox") return locale === "de" ? "ab EUR 650" : "from EUR 650";
     if (form.application_type === "side_mounted_logo") return locale === "de" ? "ab EUR 750" : "from EUR 750";
-    if (form.material === "aluminium") return locale === "de" ? "ab EUR 450" : "from EUR 450";
+    if (form.material === "aluminium_composite") return locale === "de" ? "ab EUR 450" : "from EUR 450";
     return locale === "de" ? "ab EUR 299" : "from EUR 299";
   }, [form.application_type, form.material, locale]);
 
-  function update(name: string, value: string) {
-    setForm((current) => ({ ...current, [name]: value }));
+  function update(name: keyof QuoteForm, value: string) {
+    setForm((current) => {
+      if (name === "application_type") {
+        return {
+          ...current,
+          application_type: value as ApplicationType,
+          ...getDefaultsForType(value as ApplicationType),
+        };
+      }
+
+      if (name === "main_material") {
+        return { ...current, main_material: value, material: value };
+      }
+
+      if (
+        name === "edge_material" &&
+        (current.application_type === "lightbox" || current.application_type === "side_mounted_logo")
+      ) {
+        return { ...current, edge_material: value, material: value };
+      }
+
+      return { ...current, [name]: value };
+    });
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -203,34 +848,35 @@ export default function QuotePage() {
           <h1 className="text-3xl font-light">{t.quote.title}</h1>
           <p className="mt-4 text-sm leading-6 text-neutral-400">{t.quote.intro}</p>
           <div className="mt-8 grid gap-2">
-            {q.steps.map((item, index) => (
+            {steps.map((item, index) => (
               <button
                 type="button"
                 key={item}
                 onClick={() => setStep(index)}
                 className={`rounded-2xl px-4 py-3 text-left text-sm transition ${
-                  step === index ? "bg-white text-black" : "text-neutral-400 hover:bg-white/5"
+                  safeStep === index ? "bg-white text-black" : "text-neutral-400 hover:bg-white/5"
                 }`}
               >
-                {String(index + 1).padStart(2, "0")} {item}
+                {String(index + 1).padStart(2, "0")} {q.steps[item]}
               </button>
             ))}
           </div>
         </aside>
 
         <section className="rounded-[32px] border border-white/10 bg-neutral-950 p-8">
-          {step === 0 && (
+          {currentStep === "project" && (
             <Panel title={q.projectType}>
-              <Select label={q.application} name="application_type" value={form.application_type} onChange={update}>
-                <option value="non_illuminated_logo">{q.nonIlluminatedLogo}</option>
-                <option value="illuminated_logo">{q.illuminatedLogo}</option>
-                <option value="lightbox">{q.lightbox}</option>
-                <option value="side_mounted_logo">{q.sideMountedLogo}</option>
-              </Select>
+              <OptionGrid
+                title={q.application}
+                choices={productChoices}
+                value={form.application_type}
+                locale={locale}
+                onChange={(value) => update("application_type", value)}
+              />
             </Panel>
           )}
 
-          {step === 1 && (
+          {currentStep === "size" && (
             <Panel title={q.dimensions}>
               <div className="grid gap-4 md:grid-cols-2">
                 <Input label={q.width} name="width_mm" value={form.width_mm} onChange={update} required />
@@ -241,32 +887,39 @@ export default function QuotePage() {
             </Panel>
           )}
 
-          {step === 2 && (
+          {currentStep === "material" && (
             <Panel title={q.material}>
-              <Select label={q.material} name="material" value={form.material} onChange={update}>
-                <option value="acrylic">{q.acrylic}</option>
-                <option value="aluminium">{q.aluminium}</option>
-                <option value="stainless">{q.stainless}</option>
-                <option value="lightbox">{q.lightboxTextile}</option>
-              </Select>
+              {currentConfig.materialSections.map((section) => (
+                <OptionGrid
+                  key={section.field}
+                  title={section.title[locale]}
+                  description={section.description?.[locale]}
+                  choices={section.choices}
+                  value={form[section.field]}
+                  locale={locale}
+                  onChange={(value) => update(section.field, value)}
+                />
+              ))}
             </Panel>
           )}
 
-          {step === 3 && (
+          {currentStep === "lighting" && (
             <Panel title={q.lighting}>
-              <div className="grid gap-4 md:grid-cols-2">
-                <Select label={q.lighting} name="lighting_type" value={form.lighting_type} onChange={update}>
-                  <option value="backlit">{q.backlit}</option>
-                  <option value="frontlit">{q.frontlit}</option>
-                  <option value="side-lit">{q.sideLit}</option>
-                  <option value="none">{q.none}</option>
-                </Select>
-                <Input label={q.colorTemperature} name="color_temp" value={form.color_temp} onChange={update} />
-              </div>
+              {lightingSections.map((section) => (
+                <OptionGrid
+                  key={section.field}
+                  title={section.title[locale]}
+                  description={section.description?.[locale]}
+                  choices={section.choices}
+                  value={form[section.field]}
+                  locale={locale}
+                  onChange={(value) => update(section.field, value)}
+                />
+              ))}
             </Panel>
           )}
 
-          {step === 4 && (
+          {currentStep === "logo" && (
             <Panel title={q.logoFiles}>
               <label className="flex cursor-pointer flex-col items-center justify-center rounded-[28px] border border-dashed border-white/20 bg-black/40 p-10 text-center text-neutral-300">
                 <UploadCloud className="mb-4 text-neutral-500" size={36} />
@@ -284,22 +937,32 @@ export default function QuotePage() {
             </Panel>
           )}
 
-          {step === 5 && (
+          {currentStep === "installation" && (
             <Panel title={q.installationDelivery}>
-              <div className="grid gap-4 md:grid-cols-2">
-                <Select label={q.installationNeeded} name="need_installation" value={form.need_installation} onChange={update}>
-                  <option value="true">{q.yes}</option>
-                  <option value="false">{q.no}</option>
-                </Select>
-                <Select label={q.installationScene} name="installation_scene" value={form.installation_scene} onChange={update}>
-                  <option value="outdoor">{q.outdoorInstallation}</option>
-                  <option value="indoor">{q.indoorInstallation}</option>
-                </Select>
-                <Select label={q.installationMethod} name="installation_method" value={form.installation_method} onChange={update}>
-                  <option value="individual_letters">{q.individualLetters}</option>
-                  <option value="whole_logo_or_lightbox">{q.wholeLogoOrLightbox}</option>
-                  <option value="letters_on_metal_beam">{q.lettersOnMetalBeam}</option>
-                </Select>
+              <OptionGrid
+                title={q.installationNeeded}
+                choices={installationNeededChoices}
+                value={form.need_installation}
+                locale={locale}
+                onChange={(value) => update("need_installation", value)}
+              />
+              <OptionGrid
+                title={q.installationScene}
+                choices={sceneChoices}
+                value={form.installation_scene}
+                locale={locale}
+                onChange={(value) => update("installation_scene", value)}
+              />
+              {currentConfig.installationMethods.length > 0 && (
+                <OptionGrid
+                  title={q.installationMethod}
+                  choices={currentConfig.installationMethods}
+                  value={form.installation_method}
+                  locale={locale}
+                  onChange={(value) => update("installation_method", value)}
+                />
+              )}
+              <div className="grid gap-4 md:grid-cols-3">
                 <Input label={q.country} name="country" value={form.country} onChange={update} />
                 <Input label={q.postalCode} name="postal_code" value={form.postal_code} onChange={update} />
                 <Input label={q.city} name="city" value={form.city} onChange={update} />
@@ -307,12 +970,23 @@ export default function QuotePage() {
             </Panel>
           )}
 
-          {step === 6 && (
+          {currentStep === "confirm" && (
             <Panel title={q.confirmRequest}>
               <div className="rounded-[24px] bg-white p-6 text-black">
                 <div className="text-sm text-neutral-500">{t.quote.indicative}</div>
                 <div className="mt-2 text-4xl font-light">{indicative}</div>
                 <p className="mt-3 text-sm text-neutral-600">{t.quote.notBinding}</p>
+              </div>
+              <div className="rounded-[24px] border border-white/10 bg-black/40 p-5">
+                <div className="mb-4 text-sm uppercase tracking-[0.2em] text-neutral-500">{q.selectedSummary}</div>
+                <div className="grid gap-3 text-sm text-neutral-300 md:grid-cols-2">
+                  {getSummaryRows(form, q, locale).map((row) => (
+                    <div key={row.label} className="rounded-2xl bg-white/5 p-4">
+                      <div className="text-neutral-500">{row.label}</div>
+                      <div className="mt-1 text-white">{row.value}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
               <label className="grid gap-2 text-sm text-neutral-300">
                 {q.notes}
@@ -330,15 +1004,15 @@ export default function QuotePage() {
           <div className="mt-8 flex justify-between">
             <button
               type="button"
-              onClick={() => setStep((value) => Math.max(0, value - 1))}
+              onClick={() => setStep((value) => Math.max(0, Math.min(value, steps.length - 1) - 1))}
               className="rounded-2xl border border-white/15 px-5 py-3 text-sm text-white"
             >
               {t.quote.back}
             </button>
-            {step < stepCount - 1 ? (
+            {safeStep < steps.length - 1 ? (
               <button
                 type="button"
-                onClick={() => setStep((value) => Math.min(stepCount - 1, value + 1))}
+                onClick={() => setStep((value) => Math.min(steps.length - 1, Math.min(value, steps.length - 1) + 1))}
                 className="rounded-2xl bg-white px-5 py-3 text-sm text-black"
               >
                 {t.quote.next}
@@ -364,6 +1038,118 @@ function Panel({ title, children }: { title: string; children: React.ReactNode }
   );
 }
 
+function OptionGrid({
+  title,
+  description,
+  choices,
+  value,
+  locale,
+  onChange,
+}: {
+  title: string;
+  description?: string;
+  choices: Choice[];
+  value: string;
+  locale: Locale;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <section className="grid gap-3">
+      <div>
+        <h3 className="text-lg font-light text-white">{title}</h3>
+        {description && <p className="mt-1 text-sm leading-6 text-neutral-400">{description}</p>}
+      </div>
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {choices.map((choice) => {
+          const selected = value === choice.value;
+          return (
+            <button
+              key={choice.value}
+              type="button"
+              onClick={() => onChange(choice.value)}
+              className={`group overflow-hidden rounded-[26px] border text-left transition ${
+                selected ? "border-white bg-white text-black" : "border-white/10 bg-black/40 text-white hover:border-white/40"
+              }`}
+            >
+              <div className="h-40 overflow-hidden bg-neutral-900">
+                <img
+                  src={choice.image}
+                  alt={choice.label[locale]}
+                  className="h-full w-full object-cover opacity-90 transition duration-700 group-hover:scale-105"
+                />
+              </div>
+              <div className="p-4">
+                <div className={`text-base font-light ${selected ? "text-black" : "text-white"}`}>
+                  {choice.label[locale]}
+                </div>
+                <p className={`mt-2 text-sm leading-6 ${selected ? "text-neutral-700" : "text-neutral-400"}`}>
+                  {choice.description[locale]}
+                </p>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function getSummaryRows(form: QuoteForm, q: QuoteCopy, locale: Locale) {
+  const application = findChoiceLabel(productChoices, form.application_type, locale);
+  const material = labelForFormValue(form, "material", locale);
+  const lighting =
+    form.application_type === "non_illuminated_logo"
+      ? q.none
+      : [
+          labelForFormValue(form, "lighting_type", locale),
+          labelForFormValue(form, "color_temp", locale),
+          labelForFormValue(form, "brightness", locale),
+        ]
+          .filter(Boolean)
+          .join(" / ");
+  const installation = [
+    findChoiceLabel(sceneChoices, form.installation_scene, locale),
+    labelForFormValue(form, "installation_method", locale),
+  ]
+    .filter(Boolean)
+    .join(" / ");
+
+  return [
+    { label: q.application, value: application },
+    { label: q.dimensions, value: `${form.width_mm} × ${form.height_mm} × ${form.depth_mm || "-"} mm` },
+    { label: q.quantity, value: form.quantity },
+    { label: q.material, value: material },
+    { label: q.lighting, value: lighting || q.none },
+    { label: q.installationDelivery, value: installation || findChoiceLabel(sceneChoices, form.installation_scene, locale) },
+  ];
+}
+
+function labelForFormValue(form: QuoteForm, field: keyof QuoteForm, locale: Locale) {
+  const choices = [
+    ...productChoices,
+    ...sceneChoices,
+    ...installationNeededChoices,
+    ...sharedLogoInstallationMethods,
+    ...productConfigs.non_illuminated_logo.materialSections.flatMap((section) => section.choices),
+    ...productConfigs.illuminated_logo.materialSections.flatMap((section) => section.choices),
+    ...productConfigs.illuminated_logo.lightingSections.flatMap((section) => section.choices),
+    ...productConfigs.lightbox.materialSections.flatMap((section) => section.choices),
+    ...productConfigs.side_mounted_logo.materialSections.flatMap((section) => section.choices),
+    ...productConfigs.side_mounted_logo.installationMethods,
+    ...colorTemperatureSection.choices,
+    ...brightnessSection.choices,
+  ];
+  return findChoiceLabel(choices, form[field], locale) || formatRawValue(form[field]);
+}
+
+function findChoiceLabel(choices: Choice[], value: string, locale: Locale) {
+  return choices.find((choice) => choice.value === value)?.label[locale] || "";
+}
+
+function formatRawValue(value: string) {
+  return value ? value.replaceAll("_", " ") : "";
+}
+
 function Input({
   label,
   name,
@@ -372,9 +1158,9 @@ function Input({
   required,
 }: {
   label: string;
-  name: string;
+  name: keyof QuoteForm;
   value: string;
-  onChange: (name: string, value: string) => void;
+  onChange: (name: keyof QuoteForm, value: string) => void;
   required?: boolean;
 }) {
   return (
@@ -391,30 +1177,3 @@ function Input({
   );
 }
 
-function Select({
-  label,
-  name,
-  value,
-  onChange,
-  children,
-}: {
-  label: string;
-  name: string;
-  value: string;
-  onChange: (name: string, value: string) => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="grid gap-2 text-sm text-neutral-300">
-      {label}
-      <select
-        className="rounded-2xl border border-white/10 bg-black px-4 py-3 text-white outline-none transition focus:border-white/40"
-        name={name}
-        value={value}
-        onChange={(event) => onChange(name, event.target.value)}
-      >
-        {children}
-      </select>
-    </label>
-  );
-}
