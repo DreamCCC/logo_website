@@ -73,27 +73,17 @@ const referenceGroups = [
   {
     eyebrow: "01",
     title: "Leuchtlogo innen",
-    description: "Beleuchtete Logos für Shops, Eingänge, Kassenbereiche und Innenwände.",
+    description: "Innen eingesetzte Leuchtlogos für Shops, Markenwände und Retail-Flächen.",
     items: [
-      { image: "/references/illuminated-interior-logo.jpg", title: "Shop-Eingang", text: "Kompaktes Leuchtlogo im Retail-Bereich." },
-      { image: "/references/illuminated-interior-logo-2.jpg", title: "Innenlogo im Store", text: "Leuchtkasten-Lösung für klare Markenpräsenz." },
-      { image: "/references/illuminated-retail-facade.jpg", title: "Retail-Front innen", text: "Beleuchtete Markenfläche im Eingangsbereich." },
-      { image: "/references/illuminated-retail-facade-2.jpg", title: "Leuchtlogo-Detail", text: "Nahaufnahme von Lichtfläche und Kantenausführung." },
-      { image: "/references/illuminated-indoor-05.jpg", title: "Innenraum-Anwendung", text: "Beleuchtetes Logo für Kundenlaufwege." },
-      { image: "/references/illuminated-indoor-06.jpg", title: "Brand Wall", text: "Leuchtlogo als Fokuspunkt im Innenbereich." },
+      { image: "/references/illuminated-indoor-06.jpg", title: "OMEGA Store-Display", text: "Beleuchtetes Markenlogo im Innenbereich mit kompletter Logo-Darstellung." },
     ],
   },
   {
     eyebrow: "02",
     title: "Leuchtlogo außen",
-    description: "Beleuchtete Fassadenlogos für Außenwirkung, Sichtbarkeit und Standortkennzeichnung.",
+    description: "Außen montierte Leuchtlogos für Fassaden, Hallen und Standortkennzeichnung.",
     items: [
-      { image: "/references/illuminated-exterior-logo.jpg", title: "Fassadenlogo", text: "Außenmontage mit gleichmäßiger LED-Ausleuchtung." },
-      { image: "/references/illuminated-exterior-logo-2.jpg", title: "Profilbuchstaben", text: "Gut sichtbare Shop- und Fassadenbeschriftung." },
-      { image: "/references/illuminated-outdoor-03.jpg", title: "Außenlogo bei Tag", text: "Leuchtlogo für Eingangs- und Fassadenbereiche." },
-      { image: "/references/illuminated-outdoor-04.jpg", title: "Fassadenansicht", text: "Markenlogo mit klarer Fernwirkung." },
-      { image: "/references/illuminated-outdoor-05.jpg", title: "Montierte Buchstaben", text: "Einzelbuchstaben auf Außenfassade." },
-      { image: "/references/illuminated-outdoor-06.jpg", title: "Nachtwirkung", text: "Beleuchtetes Logo mit hoher Sichtbarkeit am Abend." },
+      { image: "/references/illuminated-outdoor-03.jpg", title: "Joy Logistics Fassade", text: "Großformatiges Außenlogo mit klarer Markenwirkung auf Gebäudefassade." },
     ],
   },
   {
@@ -101,12 +91,7 @@ const referenceGroups = [
     title: "Nicht beleuchtetes Logo innen",
     description: "Nicht beleuchtete Wandlogos, 3D-Elemente und Markenflächen für Innenräume.",
     items: [
-      { image: "/references/non-illuminated-interior-logo.jpg", title: "Wandlogo Empfang", text: "Saubere Logo-Elemente auf Innenwand." },
-      { image: "/references/non-illuminated-interior-logo-2.jpg", title: "Wandgrafik", text: "Nicht beleuchtete Innenwand-Gestaltung." },
-      { image: "/references/non-illuminated-indoor-03.jpg", title: "Innenwand-Logo", text: "Logo-Elemente mit matter Oberflächenwirkung." },
-      { image: "/references/non-illuminated-indoor-04.jpg", title: "3D-Wandlogo", text: "Nicht beleuchtete Buchstaben im Innenraum." },
-      { image: "/references/non-illuminated-indoor-05.jpg", title: "Markenwand", text: "Logo und Wandgrafik als Raumidentität." },
-      { image: "/references/non-illuminated-indoor-06.jpg", title: "Office Branding", text: "Dezente Innenraum-Beschriftung." },
+      { image: "/references/non-illuminated-interior-logo.jpg", title: "Geek+ Empfangswand", text: "Nicht beleuchtetes 3D-Logo als saubere Innenraum-Markierung." },
     ],
   },
   {
@@ -114,25 +99,15 @@ const referenceGroups = [
     title: "Nicht beleuchtetes Logo außen",
     description: "Fassadenlogos ohne interne Beleuchtung, geeignet für klare Tageswirkung.",
     items: [
-      { image: "/references/non-illuminated-outdoor-01.jpg", title: "Fassadenlogo ohne Licht", text: "Außenlogo mit klarer Formensprache." },
-      { image: "/references/non-illuminated-outdoor-02.jpg", title: "Außenbeschriftung", text: "Nicht beleuchtete Einzelbuchstaben." },
-      { image: "/references/non-illuminated-outdoor-03.jpg", title: "Großes Fassadenlogo", text: "Logoelemente auf Gebäudefassade." },
-      { image: "/references/non-illuminated-outdoor-04.jpg", title: "Gebäudekennzeichnung", text: "Nicht beleuchtete Markenfläche außen." },
-      { image: "/references/non-illuminated-outdoor-05.jpg", title: "Detail Außenlogo", text: "Material, Tiefe und Montagewirkung." },
-      { image: "/references/non-illuminated-outdoor-06.jpg", title: "Standortlogo", text: "Außenwirkung ohne integrierte Beleuchtung." },
+      { image: "/references/non-illuminated-outdoor-06.jpg", title: "XPENG Fassadenlogo", text: "Nicht beleuchtetes Außenlogo auf Trägerfläche mit vollständiger Wortmarke." },
     ],
   },
   {
     eyebrow: "05",
-    title: "Logo-Stele",
-    description: "Freistehende Stelen und Pylone für Außenbereiche, Autohauser und Retail-Standorte.",
+    title: "Lightbox",
+    description: "Kompakte Leuchtkästen und Box-Logos für Retail-Eingänge und Innenbereiche.",
     items: [
-      { image: "/references/logo-pylon.jpg", title: "Freistehende Logo-Stele", text: "Standortkennzeichnung im Außenbereich." },
-      { image: "/references/logo-pylon-2.jpg", title: "Außenstele am Standort", text: "Stele mit Logo und Orientierung." },
-      { image: "/references/logo-pylon-3.jpg", title: "Pylon mit Markenlogo", text: "Freistehende Lösung für Zufahrt und Eingang." },
-      { image: "/references/logo-pylon-4.jpg", title: "Standort-Pylon", text: "Großformatige Kennzeichnung im Außenraum." },
-      { image: "/references/logo-pylon-5.jpg", title: "Logo-Stele Detail", text: "Saubere Oberfläche und robuste Außenwirkung." },
-      { image: "/references/logo-pylon-6.jpg", title: "Hohe Logo-Stele", text: "Vertikale Markenpräsenz für Fernwirkung." },
+      { image: "/references/illuminated-interior-logo-2.jpg", title: "MINI SOU Leuchtkasten", text: "Quadratischer Lightbox-Aufbau mit vollständig sichtbarem Markenlogo." },
     ],
   },
   {
@@ -140,12 +115,7 @@ const referenceGroups = [
     title: "Seitlich montiertes Logo",
     description: "Ausleger, seitlich montierte Logos und Sonderkonstruktionen für bessere Sichtbarkeit.",
     items: [
-      { image: "/references/side-mounted-logo.jpg", title: "Seitlich montiertes Logo", text: "Auskragendes Logo für Laufwege." },
-      { image: "/references/side-mounted-logo-2.jpg", title: "Seitlicher Leuchtausleger", text: "Rundes Auslegerlogo mit Beleuchtung." },
-      { image: "/references/side-mounted-logo-3.jpg", title: "Fassaden-Ausleger", text: "Seitliche Befestigung an der Gebäudefassade." },
-      { image: "/references/side-mounted-logo-4.jpg", title: "Auslegerkonstruktion", text: "Logo mit sichtbarer Tiefe und Trägerstruktur." },
-      { image: "/references/side-mounted-logo-5.jpg", title: "Doppelseitige Wirkung", text: "Seitlich sichtbares Logo für Kundenlaufwege." },
-      { image: "/references/side-mounted-logo-6.jpg", title: "Hängendes Seitenlogo", text: "Dezente seitliche Montage für Retail-Bereiche." },
+      { image: "/references/side-mounted-logo-2.jpg", title: "POP MART Ausleger", text: "Seitlich montiertes Rundlogo mit kompletter Markenfläche und Tiefenwirkung." },
     ],
   },
 ];
@@ -229,10 +199,10 @@ export default function Home() {
                   <p className="mt-4 max-w-2xl text-sm leading-6 text-neutral-400">{group.description}</p>
                 </div>
                 <div className="rounded-full border border-white/10 px-4 py-2 text-xs uppercase tracking-[0.2em] text-neutral-500">
-                  {group.items.length} Projekte
+                  1 Projekt
                 </div>
               </div>
-              <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+              <div className="grid gap-5 md:grid-cols-2">
                 {group.items.map((item) => (
                   <ReferenceCard key={item.image} {...item} />
                 ))}
