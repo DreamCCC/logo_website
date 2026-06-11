@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     cookie_secure: bool = Field(default=False, validation_alias="COOKIE_SECURE")
     upload_dir: Path = Field(default=Path("uploads"), validation_alias="UPLOAD_DIR")
     max_upload_size_mb: int = 10
+    admin_email: str = Field(default="admin@ks-logo.local", validation_alias="ADMIN_EMAIL")
+    admin_initial_password: str = Field(default="123456", validation_alias="ADMIN_INITIAL_PASSWORD")
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

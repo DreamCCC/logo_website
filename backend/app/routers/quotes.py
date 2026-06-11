@@ -118,6 +118,28 @@ async def create_quote(
             "city": city,
         },
         "referenceUrl": reference_url,
+        "submittedFields": {
+            "application_type": application_type,
+            "width_mm": width_mm,
+            "height_mm": height_mm,
+            "depth_mm": depth_mm,
+            "quantity": quantity,
+            "material": material,
+            "main_material": main_material,
+            "edge_material": edge_material,
+            "front_cover_material": front_cover_material,
+            "lighting_type": lighting_type,
+            "color_temp": color_temp,
+            "brightness": brightness,
+            "need_installation": need_installation,
+            "installation_scene": installation_scene,
+            "installation_method": installation_method,
+            "country": country,
+            "postal_code": postal_code,
+            "city": city,
+            "reference_url": reference_url,
+            "locale": locale,
+        },
     }
 
     quote = Quote(

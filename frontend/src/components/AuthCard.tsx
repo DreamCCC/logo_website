@@ -7,6 +7,11 @@ import { apiFetch } from "@/lib/api";
 import { useLanguage } from "./LanguageProvider";
 
 type AuthMode = "login" | "register";
+type AuthResponse = {
+  user: {
+    is_admin: boolean;
+  };
+};
 
 export function AuthCard({ mode }: { mode: AuthMode }) {
   const router = useRouter();
@@ -23,13 +28,13 @@ export function AuthCard({ mode }: { mode: AuthMode }) {
     const payload = Object.fromEntries(form.entries());
 
     try {
-      await apiFetch(mode === "login" ? "/auth/login" : "/auth/register", {
+      const response = await apiFetch<AuthResponse>(mode === "login" ? "/auth/login" : "/auth/register", {
         method: "POST",
         body: JSON.stringify(
           mode === "register" ? { ...payload, preferred_locale: locale } : payload,
         ),
       });
-      router.push(mode === "login" ? "/account" : "/quote");
+      router.push(response.user.is_admin ? "/admin" : mode === "login" ? "/account" : "/quote");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -51,7 +56,13 @@ export function AuthCard({ mode }: { mode: AuthMode }) {
 
         <form onSubmit={handleSubmit} className="grid gap-4">
           <Input label={t.auth.email} name="email" type="email" required />
-          <Input label={t.auth.password} name="password" type="password" required minLength={8} />
+          <Input
+            label={t.auth.password}
+            name="password"
+            type="password"
+            required
+            minLength={mode === "register" ? 8 : undefined}
+          />
           {mode === "register" && (
             <>
               <Input label={t.auth.company} name="company_name" />

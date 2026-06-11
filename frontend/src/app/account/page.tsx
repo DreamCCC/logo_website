@@ -18,6 +18,7 @@ type User = {
   email: string;
   company_name: string | null;
   contact_name: string | null;
+  is_admin: boolean;
 };
 
 export default function AccountPage() {
@@ -66,9 +67,16 @@ export default function AccountPage() {
             </div>
             <h1 className="text-4xl font-light">{t.account.title}</h1>
           </div>
-          <Link href="/quote" className="rounded-2xl bg-white px-5 py-3 text-sm text-black">
-            {t.nav.quote}
-          </Link>
+          <div className="flex flex-wrap gap-3">
+            {user?.is_admin && (
+              <Link href="/admin" className="rounded-2xl border border-white/15 px-5 py-3 text-sm text-white">
+                Admin
+              </Link>
+            )}
+            <Link href="/quote" className="rounded-2xl bg-white px-5 py-3 text-sm text-black">
+              {t.nav.quote}
+            </Link>
+          </div>
         </div>
 
         {quotes.length === 0 ? (

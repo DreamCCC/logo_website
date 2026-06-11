@@ -25,6 +25,7 @@ class UserPublic(BaseModel):
     contact_name: str | None
     phone: str | None
     preferred_locale: str
+    is_admin: bool
 
     class Config:
         from_attributes = True
@@ -96,3 +97,79 @@ class GalleryItemPublic(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class AdminUserPublic(UserPublic):
+    created_at: datetime
+    updated_at: datetime
+    last_login_at: datetime | None
+
+
+class AdminUserRoleUpdate(BaseModel):
+    is_admin: bool
+
+
+class AdminQuoteUser(BaseModel):
+    id: int
+    email: EmailStr
+    company_name: str | None
+    contact_name: str | None
+
+    class Config:
+        from_attributes = True
+
+
+class AdminQuotePublic(QuotePublic):
+    updated_at: datetime
+    quoted_at: datetime | None
+    user: AdminQuoteUser
+
+
+class AdminQuoteFilePublic(QuoteFilePublic):
+    quote_id: int
+    file_name: str
+    file_path: str
+
+
+class AdminProductPublic(ProductPublic):
+    active: bool
+    sort_order: int
+    created_at: datetime
+    updated_at: datetime
+
+
+class AdminGalleryItemPublic(GalleryItemPublic):
+    published: bool
+    sort_order: int
+    created_at: datetime
+    updated_at: datetime
+
+
+class AdminStartingPriceRulePublic(BaseModel):
+    id: int
+    name: str
+    project_type: str | None
+    material: str | None
+    min_width_mm: int | None
+    max_width_mm: int | None
+    min_height_mm: int | None
+    max_height_mm: int | None
+    starting_price: float
+    currency: str
+    active: bool
+    sort_order: int
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class AdminSummary(BaseModel):
+    users: int
+    admins: int
+    quotes: int
+    quote_files: int
+    products: int
+    gallery_items: int
+    starting_price_rules: int
