@@ -308,6 +308,7 @@ export default function AdminPage() {
                 <RecordCard
                   key={String(row.id ?? row.quote_number ?? index)}
                   row={row}
+                  recordType={activeTab}
                   columns={activeConfig.columns}
                   canManageAdmins={canManageAdmins}
                   showAdminActions={activeTab === "users"}
@@ -326,12 +327,14 @@ export default function AdminPage() {
 
 function RecordCard({
   row,
+  recordType,
   columns,
   canManageAdmins,
   showAdminActions,
   onSetAdminRole,
 }: {
   row: AdminRecord;
+  recordType: TabKey;
   columns: Column[];
   canManageAdmins: boolean;
   showAdminActions: boolean;
@@ -380,13 +383,124 @@ function RecordCard({
         </div>
       )}
 
-      <details className="mt-4 rounded-2xl border border-white/10 bg-neutral-950 p-4">
-        <summary className="cursor-pointer text-sm text-neutral-300">Full record JSON</summary>
-        <pre className="mt-4 max-h-[520px] overflow-auto whitespace-pre-wrap text-xs leading-5 text-neutral-300">
-          {JSON.stringify(row, null, 2)}
-        </pre>
-      </details>
+      {recordType === "quotes" && <QuoteRequestDetails row={row} />}
     </article>
+  );
+}
+
+function QuoteRequestDetails({ row }: { row: AdminRecord }) {
+  const payload = toRecord(row.form_payload);
+  const user = toRecord(row.user);
+  const dimensions = toRecord(payload.dimensions);
+  const materials = toRecord(payload.materials);
+  const installation = toRecord(payload.installation);
+  const files = Array.isArray(row.files) ? row.files.filter(isRecord) : [];
+
+  const sections = [
+    {
+      title: "Customer",
+      fields: [
+        detail("Email", getValue(user, "email")),
+        detail("Company", getValue(user, "company_name")),
+        detail("Contact", getValue(user, "contact_name")),
+        detail("Language", row.locale),
+        detail("Submitted", row.created_at),
+      ],
+    },
+    {
+      title: "Project",
+      fields: [
+        detail("Quote number", row.quote_number),
+        detail("Project type", labelValue(payload.applicationType ?? row.project_type)),
+        detail("Status", row.status),
+        detail("Indicative starting price", row.indicative_price_label),
+      ],
+    },
+    {
+      title: "Size and quantity",
+      fields: [
+        detail("Width", formatMeasurement(dimensions.widthMm)),
+        detail("Height", formatMeasurement(dimensions.heightMm)),
+        detail("Depth", formatMeasurement(dimensions.depthMm)),
+        detail("Quantity", payload.quantity),
+      ],
+    },
+    {
+      title: "Materials",
+      fields: [
+        detail("Pricing material", labelValue(payload.material)),
+        detail("Logo body material", labelValue(materials.mainMaterial)),
+        detail("Edge / side material", labelValue(materials.edgeMaterial)),
+        detail("Front cover material", labelValue(materials.frontCoverMaterial)),
+      ],
+    },
+    {
+      title: "Lighting",
+      fields: [
+        detail("Lighting type", labelValue(payload.lightingType)),
+        detail("Color temperature", payload.colorTemperature),
+        detail("Brightness", labelValue(payload.brightness)),
+      ],
+    },
+    {
+      title: "Installation",
+      fields: [
+        detail("Installation needed", formatBoolean(installation.needed)),
+        detail("Installation scene", labelValue(installation.scene)),
+        detail("Installation method", labelValue(installation.method)),
+        detail("Country", installation.country),
+        detail("Postal code", installation.postalCode),
+        detail("City", installation.city),
+      ],
+    },
+    {
+      title: "Logo, reference and notes",
+      fields: [
+        detail("Reference URL", payload.referenceUrl),
+        detail("Customer notes", row.customer_notes),
+      ],
+    },
+  ];
+
+  return (
+    <div className="mt-5 rounded-[26px] border border-white/10 bg-neutral-950 p-5">
+      <div className="mb-5 text-sm uppercase tracking-[0.2em] text-neutral-500">
+        Quote request details
+      </div>
+      <div className="grid gap-4 lg:grid-cols-2">
+        {sections.map((section) => (
+          <section key={section.title} className="rounded-[22px] bg-white/5 p-5">
+            <h3 className="text-lg font-light text-white">{section.title}</h3>
+            <div className="mt-4 grid gap-3">
+              {section.fields.map((field) => (
+                <div key={field.label} className="grid gap-1 text-sm">
+                  <div className="text-neutral-500">{field.label}</div>
+                  <div className="break-words text-neutral-100">{field.value}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
+        <section className="rounded-[22px] bg-white/5 p-5 lg:col-span-2">
+          <h3 className="text-lg font-light text-white">Uploaded files</h3>
+          {files.length > 0 ? (
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              {files.map((file) => (
+                <div key={String(file.id ?? file.original_name)} className="rounded-2xl bg-black/35 p-4 text-sm">
+                  <div className="break-words text-neutral-100">{formatValue(file.original_name)}</div>
+                  <div className="mt-2 text-neutral-500">
+                    {formatValue(file.mime_type)} · {formatFileSize(file.file_size)}
+                  </div>
+                  <div className="mt-1 text-neutral-500">Uploaded: {formatValue(file.created_at)}</div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-4 text-sm text-neutral-400">No files uploaded.</div>
+          )}
+        </section>
+      </div>
+    </div>
   );
 }
 
@@ -397,6 +511,67 @@ function getValue(row: AdminRecord, path: string): unknown {
     }
     return null;
   }, row);
+}
+
+function detail(label: string, value: unknown): { label: string; value: ReactNode } {
+  return { label, value: formatValue(value) };
+}
+
+function isRecord(value: unknown): value is AdminRecord {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function toRecord(value: unknown): AdminRecord {
+  return isRecord(value) ? value : {};
+}
+
+const readableValues: Record<string, string> = {
+  non_illuminated_logo: "Non-illuminated logo",
+  illuminated_logo: "Illuminated logo",
+  lightbox: "Lightbox",
+  side_mounted_logo: "Side-mounted logo",
+  painted_wood: "Painted wood",
+  acrylic: "Acrylic",
+  aluminium_composite: "Aluminium composite panel",
+  stainless_steel: "Stainless steel",
+  textile: "Fabric / textile",
+  backlit: "Backlit",
+  frontlit: "Frontlit",
+  side_lit: "Side lit",
+  low: "Low",
+  medium: "Medium",
+  high: "High",
+  indoor: "Indoor installation",
+  outdoor: "Outdoor installation",
+  individual_letters: "Individual letters mounted separately",
+  letters_on_metal_beam: "Letters mounted on a support bar",
+  logo_backboard: "Logo mounted on a back panel",
+  metal_rod_support: "Metal rod support installation",
+  wall_mounted_side_logo: "Full side sign mounted against the wall",
+};
+
+function labelValue(value: unknown): unknown {
+  if (typeof value !== "string") return value;
+  return readableValues[value] || value;
+}
+
+function formatBoolean(value: unknown): unknown {
+  if (typeof value === "boolean") return value ? "Yes" : "No";
+  if (value === "true") return "Yes";
+  if (value === "false") return "No";
+  return value;
+}
+
+function formatMeasurement(value: unknown): unknown {
+  if (value === null || value === undefined || value === "") return value;
+  return `${value} mm`;
+}
+
+function formatFileSize(value: unknown): string {
+  if (typeof value !== "number") return "Unknown size";
+  if (value < 1024) return `${value} B`;
+  if (value < 1024 * 1024) return `${(value / 1024).toFixed(1)} KB`;
+  return `${(value / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 function formatValue(value: unknown): ReactNode {
