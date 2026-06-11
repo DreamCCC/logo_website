@@ -6,7 +6,7 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 
 const images = {
-  hero: "https://images.unsplash.com/photo-1772452324050-bca34b3201fd?q=80&w=2200&auto=format&fit=crop",
+  hero: "https://images.unsplash.com/photo-1759795075729-39ffc0efaaa0?q=80&w=2200&auto=format&fit=crop",
 };
 
 const referenceGroups = [
