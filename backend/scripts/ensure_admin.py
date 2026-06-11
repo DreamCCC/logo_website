@@ -6,6 +6,8 @@ from app import models  # noqa: F401
 from app.models import User
 from app.security import hash_password
 
+LEGACY_ADMIN_EMAIL = "admin@ks-logo.local"
+
 
 def main() -> None:
     settings = get_settings()
@@ -18,6 +20,23 @@ def main() -> None:
         if admin:
             admin.is_admin = True
             message = f"Admin user exists and is enabled: {email}"
+        elif email != LEGACY_ADMIN_EMAIL:
+            legacy_admin = db.scalar(select(User).where(User.email == LEGACY_ADMIN_EMAIL))
+            if legacy_admin:
+                legacy_admin.email = email
+                legacy_admin.is_admin = True
+                message = f"Legacy admin user renamed to: {email}"
+            else:
+                admin = User(
+                    email=email,
+                    password_hash=hash_password(settings.admin_initial_password),
+                    company_name="KS. Logo",
+                    contact_name="Admin",
+                    preferred_locale="de",
+                    is_admin=True,
+                )
+                db.add(admin)
+                message = f"Admin user created: {email}"
         else:
             admin = User(
                 email=email,

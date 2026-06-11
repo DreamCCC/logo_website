@@ -46,7 +46,7 @@ type TabConfig = {
 };
 
 const PAGE_SIZE = 10;
-const PRIMARY_ADMIN_EMAIL = "admin@ks-logo.local";
+const PRIMARY_ADMIN_EMAIL = "admin@ks-logo.de";
 
 const tabs: TabConfig[] = [
   {
