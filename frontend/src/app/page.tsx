@@ -7,36 +7,7 @@ import { useLanguage } from "@/components/LanguageProvider";
 
 const images = {
   hero: "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?q=80&w=2200&auto=format&fit=crop",
-  acrylic: "https://images.unsplash.com/photo-1518005020951-eccb494ad742?q=80&w=1600&auto=format&fit=crop",
-  aluminium: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=1600&auto=format&fit=crop",
-  lightbox: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop",
-  facade: "https://images.unsplash.com/photo-1549924231-f129b911e442?q=80&w=1600&auto=format&fit=crop",
-  workshop: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=1600&auto=format&fit=crop",
-  detail: "https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?q=80&w=1600&auto=format&fit=crop",
 };
-
-const systems = [
-  {
-    image: images.acrylic,
-    title: "Nicht beleuchtetes Logo",
-    text: "Clean acrylic, aluminium or stainless logo elements without internal illumination for indoor walls and facade applications.",
-  },
-  {
-    image: images.facade,
-    title: "Beleuchtetes Logo",
-    text: "Frontlit, backlit or halo-lit logo systems with LED modules for premium brand visibility.",
-  },
-  {
-    image: images.lightbox,
-    title: "Lightbox",
-    text: "Complete illuminated lightbox solutions for retail facades, brand walls and campaign graphics.",
-  },
-  {
-    image: images.aluminium,
-    title: "Seitlich montiertes Logo",
-    text: "Side-mounted logo structures for projecting facade visibility and special mounting conditions.",
-  },
-];
 
 const referenceGroups = [
   {
@@ -142,17 +113,6 @@ export default function Home() {
         <div className="text-lg leading-8 text-neutral-300">{t.sections.builtText}</div>
       </section>
 
-      <section id="systems" className="px-6 pb-28">
-        <div className="mx-auto max-w-7xl">
-          <SectionTitle eyebrow={t.sections.systems} title={t.sections.systemsTitle} />
-          <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-4">
-            {systems.map((item) => (
-              <ImageCard key={item.title} {...item} />
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section id="references" className="mx-auto max-w-7xl px-6 pb-28">
         <SectionTitle
           eyebrow={t.sections.references}
@@ -190,39 +150,14 @@ function SectionTitle({ eyebrow, title }: { eyebrow: string; title: string }) {
   );
 }
 
-function ImageCard({
-  image,
-  title,
-  text,
-  tall = false,
-}: {
-  image: string;
-  title: string;
-  text: string;
-  tall?: boolean;
-}) {
-  return (
-    <div className={`group relative overflow-hidden rounded-[32px] bg-neutral-900 ${tall ? "h-[620px]" : "h-[420px]"}`}>
-      <img src={image} alt={title} className="h-full w-full object-cover opacity-90 transition duration-700 group-hover:scale-105 group-hover:opacity-100" />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-      <div className="absolute bottom-0 left-0 p-8">
-        <h3 className="text-2xl font-light text-white">{title}</h3>
-        <p className="mt-3 max-w-md text-sm leading-6 text-neutral-300">{text}</p>
-      </div>
-    </div>
-  );
-}
-
 function ReferenceCard({
   image,
-  eyebrow,
   title,
   project,
   description,
   text,
 }: {
   image: string;
-  eyebrow: string;
   title: string;
   project: string;
   description: string;
@@ -232,9 +167,6 @@ function ReferenceCard({
     <div className="group h-full overflow-hidden rounded-[28px] border border-white/10 bg-neutral-950 shadow-sm transition hover:-translate-y-1 hover:border-white/25">
       <div className="relative h-64 overflow-hidden bg-neutral-900">
         <img src={image} alt={project} className="h-full w-full object-cover opacity-90 transition duration-700 group-hover:scale-105" />
-        <div className="absolute left-4 top-4 rounded-full bg-black/60 px-3 py-1 text-xs text-white backdrop-blur">
-          #{eyebrow}
-        </div>
       </div>
       <div className="p-6">
         <div className="mb-3 text-xs uppercase tracking-[0.2em] text-neutral-500">{title}</div>
