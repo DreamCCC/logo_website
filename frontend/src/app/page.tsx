@@ -15,7 +15,6 @@ const referenceGroups = [
     title: "Leuchtlogo innen",
     description: "Innen eingesetzte Leuchtlogos für Shops, Markenwände und Retail-Flächen.",
     image: "/references/illuminated-indoor-06.jpg",
-    project: "OMEGA Store-Display",
     text: "Beleuchtetes Markenlogo im Innenbereich mit kompletter Logo-Darstellung.",
   },
   {
@@ -23,7 +22,6 @@ const referenceGroups = [
     title: "Leuchtlogo außen",
     description: "Außen montierte Leuchtlogos für Fassaden, Hallen und Standortkennzeichnung.",
     image: "/references/illuminated-outdoor-03.jpg",
-    project: "Joy Logistics Fassade",
     text: "Großformatiges Außenlogo mit klarer Markenwirkung auf Gebäudefassade.",
   },
   {
@@ -31,7 +29,6 @@ const referenceGroups = [
     title: "Nicht beleuchtetes Logo innen",
     description: "Nicht beleuchtete Wandlogos, 3D-Elemente und Markenflächen für Innenräume.",
     image: "/references/non-illuminated-interior-logo.jpg",
-    project: "Geek+ Empfangswand",
     text: "Nicht beleuchtetes 3D-Logo als saubere Innenraum-Markierung.",
   },
   {
@@ -39,15 +36,13 @@ const referenceGroups = [
     title: "Nicht beleuchtetes Logo außen",
     description: "Fassadenlogos ohne interne Beleuchtung, geeignet für klare Tageswirkung.",
     image: "/references/non-illuminated-outdoor-06.jpg",
-    project: "XPENG Fassadenlogo",
     text: "Nicht beleuchtetes Außenlogo auf Trägerfläche mit vollständiger Wortmarke.",
   },
   {
     eyebrow: "05",
-    title: "Lightbox",
+    title: "Leuchtkasten",
     description: "Kompakte Leuchtkästen und Box-Logos für Retail-Eingänge und Innenbereiche.",
     image: "/references/illuminated-interior-logo-2.jpg",
-    project: "MINI SOU Leuchtkasten",
     text: "Quadratischer Lightbox-Aufbau mit vollständig sichtbarem Markenlogo.",
   },
   {
@@ -55,7 +50,6 @@ const referenceGroups = [
     title: "Seitlich montiertes Logo",
     description: "Ausleger, seitlich montierte Logos und Sonderkonstruktionen für bessere Sichtbarkeit.",
     image: "/references/side-mounted-logo-2.jpg",
-    project: "POP MART Ausleger",
     text: "Seitlich montiertes Rundlogo mit kompletter Markenfläche und Tiefenwirkung.",
   },
 ];
@@ -153,24 +147,22 @@ function SectionTitle({ eyebrow, title }: { eyebrow: string; title: string }) {
 function ReferenceCard({
   image,
   title,
-  project,
   description,
   text,
 }: {
   image: string;
   title: string;
-  project: string;
   description: string;
   text: string;
 }) {
   return (
     <div className="group h-full overflow-hidden rounded-[28px] border border-white/10 bg-neutral-950 shadow-sm transition hover:-translate-y-1 hover:border-white/25">
       <div className="relative h-64 overflow-hidden bg-neutral-900">
-        <img src={image} alt={project} className="h-full w-full object-cover opacity-90 transition duration-700 group-hover:scale-105" />
+        <img src={image} alt={title} className="h-full w-full object-cover opacity-90 transition duration-700 group-hover:scale-105" />
       </div>
       <div className="p-6">
-        <div className="mb-3 text-xs uppercase tracking-[0.2em] text-neutral-500">{title}</div>
-        <h3 className="text-xl font-light text-white">{project}</h3>
+        <div className="mb-3 text-xs uppercase tracking-[0.2em] text-neutral-500">Referenzkategorie</div>
+        <h3 className="text-xl font-light text-white">{title}</h3>
         <p className="mt-3 text-sm leading-6 text-neutral-400">{description}</p>
         <p className="mt-4 text-sm leading-6 text-neutral-300">{text}</p>
       </div>

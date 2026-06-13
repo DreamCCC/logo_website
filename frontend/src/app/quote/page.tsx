@@ -203,6 +203,53 @@ const referenceImages = {
   sideMounted: "/references/side-mounted-logo-2.jpg",
 };
 
+const optionImages = {
+  acrylic:
+    "https://images.unsplash.com/photo-1744056996022-c33f1cc49030?q=80&w=1200&auto=format&fit=crop",
+  aluminiumComposite:
+    "https://images.unsplash.com/photo-1777441054084-fe302f5e2187?q=80&w=1200&auto=format&fit=crop",
+  paintedWood:
+    "https://images.unsplash.com/photo-1737093861200-245fde29f419?q=80&w=1200&auto=format&fit=crop",
+  stainlessSteel:
+    "https://images.unsplash.com/photo-1501166222995-ff31c7e93cef?q=80&w=1200&auto=format&fit=crop",
+  textile:
+    "https://images.unsplash.com/photo-1637004732258-4b792ce8f474?q=80&w=1200&auto=format&fit=crop",
+  indoorInstallation:
+    "https://images.unsplash.com/photo-1709130271230-9e26ea5f8023?q=80&w=1200&auto=format&fit=crop",
+  outdoorInstallation:
+    "https://images.unsplash.com/photo-1770259406469-b83c307b2dca?q=80&w=1200&auto=format&fit=crop",
+  noInstallation:
+    "https://images.unsplash.com/photo-1744056996022-c33f1cc49030?q=80&w=1200&auto=format&fit=crop",
+  individualLetters:
+    "https://images.unsplash.com/photo-1709130271230-9e26ea5f8023?q=80&w=1200&auto=format&fit=crop",
+  supportBar:
+    "https://images.unsplash.com/photo-1509731444445-095e85378cc9?q=80&w=1200&auto=format&fit=crop",
+  logoBackboard:
+    "https://images.unsplash.com/photo-1695048168808-4bbfa1efdfa7?q=80&w=1200&auto=format&fit=crop",
+  metalRodSupport:
+    "https://images.unsplash.com/photo-1671545644823-048a4e181de7?q=80&w=1200&auto=format&fit=crop",
+  wallMountedSideLogo:
+    "https://images.unsplash.com/photo-1695048168808-4bbfa1efdfa7?q=80&w=1200&auto=format&fit=crop",
+  backlit:
+    "https://images.unsplash.com/photo-1755805875004-6c719f2a5e2b?q=80&w=1200&auto=format&fit=crop",
+  frontlit:
+    "https://images.unsplash.com/photo-1654860535404-aa828d051761?q=80&w=1200&auto=format&fit=crop",
+  sideLit:
+    "https://images.unsplash.com/photo-1659066019874-7a15628cea60?q=80&w=1200&auto=format&fit=crop",
+  warmWhite:
+    "https://images.unsplash.com/photo-1770085140346-9a2cfca85178?q=80&w=1200&auto=format&fit=crop",
+  neutralWhite:
+    "https://images.unsplash.com/photo-1563647214-2bedb91e306a?q=80&w=1200&auto=format&fit=crop",
+  coolWhite:
+    "https://images.unsplash.com/photo-1480603509257-c0bfc8135e13?q=80&w=1200&auto=format&fit=crop",
+  lowBrightness:
+    "https://images.unsplash.com/photo-1763718476503-8d0b81eb1746?q=80&w=1200&auto=format&fit=crop",
+  mediumBrightness:
+    "https://images.unsplash.com/photo-1563647214-2bedb91e306a?q=80&w=1200&auto=format&fit=crop",
+  highBrightness:
+    "https://images.unsplash.com/photo-1659066019874-7a15628cea60?q=80&w=1200&auto=format&fit=crop",
+};
+
 const productChoices: Choice[] = [
   {
     value: "non_illuminated_logo",
@@ -250,7 +297,7 @@ const sceneChoices: Choice[] = [
       en: "For stores, reception walls, counters and interior customer areas.",
       de: "Für Stores, Empfangswände, Kassenbereiche und Innenflächen.",
     },
-    image: referenceImages.illuminatedInterior,
+    image: optionImages.indoorInstallation,
   },
   {
     value: "outdoor",
@@ -259,7 +306,7 @@ const sceneChoices: Choice[] = [
       en: "For facades, entrances and exterior brand visibility.",
       de: "Für Fassaden, Eingänge und Außenwirkung.",
     },
-    image: referenceImages.illuminatedOutdoor,
+    image: optionImages.outdoorInstallation,
   },
 ];
 
@@ -271,7 +318,7 @@ const installationNeededChoices: Choice[] = [
       en: "Our team should include installation details in the formal quote.",
       de: "Unser Team soll Montagedetails im verbindlichen Angebot berücksichtigen.",
     },
-    image: referenceImages.nonIlluminatedOutdoor,
+    image: optionImages.outdoorInstallation,
   },
   {
     value: "false",
@@ -280,7 +327,7 @@ const installationNeededChoices: Choice[] = [
       en: "Production and delivery only. You will organize installation separately.",
       de: "Nur Produktion und Lieferung. Die Montage organisieren Sie separat.",
     },
-    image: referenceImages.nonIlluminatedIndoor,
+    image: optionImages.noInstallation,
   },
 ];
 
@@ -292,7 +339,7 @@ const sharedLogoInstallationMethods: Choice[] = [
       en: "Each letter or logo element is mounted separately on the surface.",
       de: "Jeder Buchstabe oder jedes Logo-Element wird separat montiert.",
     },
-    image: referenceImages.illuminatedOutdoor,
+    image: optionImages.individualLetters,
   },
   {
     value: "letters_on_metal_beam",
@@ -301,7 +348,7 @@ const sharedLogoInstallationMethods: Choice[] = [
       en: "Letters are pre-fixed on a straight support bar for easier installation.",
       de: "Buchstaben werden auf einer geraden Trägerleiste vormontiert.",
     },
-    image: referenceImages.nonIlluminatedOutdoor,
+    image: optionImages.supportBar,
   },
   {
     value: "logo_backboard",
@@ -310,7 +357,7 @@ const sharedLogoInstallationMethods: Choice[] = [
       en: "The logo is mounted as a complete unit on a back panel.",
       de: "Das Logo wird als komplette Einheit auf einer Rückwand montiert.",
     },
-    image: referenceImages.lightbox,
+    image: optionImages.logoBackboard,
   },
 ];
 
@@ -328,7 +375,7 @@ const productConfigs: Record<ApplicationType, ProductConfig> = {
               en: "Painted wooden body for warm interior or decorative logo effects.",
               de: "Lackierter Holzkörper für warme Innenraum- oder Dekorwirkung.",
             },
-            image: referenceImages.nonIlluminatedIndoor,
+            image: optionImages.paintedWood,
           },
           {
             value: "acrylic",
@@ -337,7 +384,7 @@ const productConfigs: Record<ApplicationType, ProductConfig> = {
               en: "Clean acrylic logo elements for crisp shapes and smooth surfaces.",
               de: "Saubere Acryl-Logoelemente mit klaren Konturen und glatter Oberfläche.",
             },
-            image: referenceImages.nonIlluminatedIndoor,
+            image: optionImages.acrylic,
           },
           {
             value: "aluminium_composite",
@@ -346,7 +393,7 @@ const productConfigs: Record<ApplicationType, ProductConfig> = {
               en: "Rigid panel material for outdoor facades and larger logo bodies.",
               de: "Stabiles Plattenmaterial für Außenfassaden und größere Logoformen.",
             },
-            image: referenceImages.nonIlluminatedOutdoor,
+            image: optionImages.aluminiumComposite,
           },
         ],
       },
@@ -371,7 +418,7 @@ const productConfigs: Record<ApplicationType, ProductConfig> = {
               en: "Default translucent body material for reliable LED illumination.",
               de: "Standardmaterial für gleichmäßige und zuverlässige LED-Ausleuchtung.",
             },
-            image: referenceImages.illuminatedInterior,
+            image: optionImages.acrylic,
           },
         ],
       },
@@ -386,7 +433,7 @@ const productConfigs: Record<ApplicationType, ProductConfig> = {
               en: "Lightweight edge build for clean indoor and retail applications.",
               de: "Leichter Kantenaufbau für saubere Innen- und Retail-Anwendungen.",
             },
-            image: referenceImages.illuminatedInterior,
+            image: optionImages.acrylic,
           },
           {
             value: "aluminium_composite",
@@ -395,7 +442,7 @@ const productConfigs: Record<ApplicationType, ProductConfig> = {
               en: "Stable side structure for larger logo bodies and facade use.",
               de: "Stabile Seitenstruktur für größere Logokörper und Fassadeneinsatz.",
             },
-            image: referenceImages.illuminatedOutdoor,
+            image: optionImages.aluminiumComposite,
           },
           {
             value: "stainless_steel",
@@ -404,7 +451,7 @@ const productConfigs: Record<ApplicationType, ProductConfig> = {
               en: "Premium edge material with strong durability and clean finish.",
               de: "Hochwertiges Kantenmaterial mit robuster und sauberer Oberfläche.",
             },
-            image: referenceImages.nonIlluminatedOutdoor,
+            image: optionImages.stainlessSteel,
           },
         ],
       },
@@ -421,7 +468,7 @@ const productConfigs: Record<ApplicationType, ProductConfig> = {
               en: "Halo effect from the wall or back panel behind the logo.",
               de: "Halo-Effekt von Wand oder Rückfläche hinter dem Logo.",
             },
-            image: referenceImages.illuminatedOutdoor,
+            image: optionImages.backlit,
           },
           {
             value: "frontlit",
@@ -430,7 +477,7 @@ const productConfigs: Record<ApplicationType, ProductConfig> = {
               en: "The logo face itself lights up for maximum readability.",
               de: "Die Logofront leuchtet direkt für maximale Lesbarkeit.",
             },
-            image: referenceImages.lightbox,
+            image: optionImages.frontlit,
           },
           {
             value: "side_lit",
@@ -439,7 +486,7 @@ const productConfigs: Record<ApplicationType, ProductConfig> = {
               en: "Light escapes through the side edge for a dimensional effect.",
               de: "Licht tritt seitlich aus und erzeugt Tiefenwirkung.",
             },
-            image: referenceImages.sideMounted,
+            image: optionImages.sideLit,
           },
         ],
       },
@@ -459,7 +506,7 @@ const productConfigs: Record<ApplicationType, ProductConfig> = {
               en: "Robust premium side material for durable box construction.",
               de: "Robustes Premium-Seitenmaterial für langlebige Kastenbauweise.",
             },
-            image: referenceImages.nonIlluminatedOutdoor,
+            image: optionImages.stainlessSteel,
           },
           {
             value: "aluminium_composite",
@@ -468,7 +515,7 @@ const productConfigs: Record<ApplicationType, ProductConfig> = {
               en: "Lightweight, stable and suitable for larger lightbox sides.",
               de: "Leicht, stabil und geeignet für größere Leuchtkastenseiten.",
             },
-            image: referenceImages.illuminatedOutdoor,
+            image: optionImages.aluminiumComposite,
           },
           {
             value: "acrylic",
@@ -477,7 +524,7 @@ const productConfigs: Record<ApplicationType, ProductConfig> = {
               en: "Clean side material for compact indoor lightboxes.",
               de: "Sauberes Seitenmaterial für kompakte Indoor-Leuchtkästen.",
             },
-            image: referenceImages.lightbox,
+            image: optionImages.acrylic,
           },
         ],
       },
@@ -492,7 +539,7 @@ const productConfigs: Record<ApplicationType, ProductConfig> = {
               en: "Textile front for larger illuminated graphics and soft light.",
               de: "Textilfront für größere Leuchtgrafiken und weiches Licht.",
             },
-            image: referenceImages.illuminatedInterior,
+            image: optionImages.textile,
           },
           {
             value: "acrylic",
@@ -501,7 +548,7 @@ const productConfigs: Record<ApplicationType, ProductConfig> = {
               en: "Acrylic front for crisp logo shapes and compact boxes.",
               de: "Acrylfront für klare Logoformen und kompakte Kästen.",
             },
-            image: referenceImages.lightbox,
+            image: optionImages.acrylic,
           },
         ],
       },
@@ -522,7 +569,7 @@ const productConfigs: Record<ApplicationType, ProductConfig> = {
               en: "Strong side body for visible projecting signs.",
               de: "Starker Seitenkörper für gut sichtbare Ausleger.",
             },
-            image: referenceImages.sideMounted,
+            image: optionImages.stainlessSteel,
           },
           {
             value: "aluminium_composite",
@@ -531,7 +578,7 @@ const productConfigs: Record<ApplicationType, ProductConfig> = {
               en: "Stable and lightweight side construction.",
               de: "Stabile und leichte Seitenkonstruktion.",
             },
-            image: referenceImages.illuminatedOutdoor,
+            image: optionImages.aluminiumComposite,
           },
           {
             value: "acrylic",
@@ -540,7 +587,7 @@ const productConfigs: Record<ApplicationType, ProductConfig> = {
               en: "Clean compact build for smaller projecting logo signs.",
               de: "Sauberer kompakter Aufbau für kleinere Auslegerlogos.",
             },
-            image: referenceImages.lightbox,
+            image: optionImages.acrylic,
           },
         ],
       },
@@ -555,7 +602,7 @@ const productConfigs: Record<ApplicationType, ProductConfig> = {
               en: "Fabric front for larger illuminated side signs.",
               de: "Textilfront für größere beleuchtete Seitenschilder.",
             },
-            image: referenceImages.illuminatedInterior,
+            image: optionImages.textile,
           },
           {
             value: "acrylic",
@@ -564,7 +611,7 @@ const productConfigs: Record<ApplicationType, ProductConfig> = {
               en: "Acrylic front for crisp logo readability.",
               de: "Acrylfront für klare Lesbarkeit des Logos.",
             },
-            image: referenceImages.sideMounted,
+            image: optionImages.acrylic,
           },
         ],
       },
@@ -578,7 +625,7 @@ const productConfigs: Record<ApplicationType, ProductConfig> = {
           en: "The sign projects from the facade with visible metal supports.",
           de: "Das Schild kragt mit sichtbaren Metallstangen aus der Fassade.",
         },
-        image: referenceImages.sideMounted,
+        image: optionImages.metalRodSupport,
       },
       {
         value: "wall_mounted_side_logo",
@@ -587,7 +634,7 @@ const productConfigs: Record<ApplicationType, ProductConfig> = {
           en: "The complete side sign sits close to the wall or facade.",
           de: "Das komplette Seitenschild liegt nah an Wand oder Fassade.",
         },
-        image: referenceImages.illuminatedOutdoor,
+        image: optionImages.wallMountedSideLogo,
       },
     ],
   },
@@ -604,7 +651,7 @@ const colorTemperatureSection: ChoiceSection = {
         en: "Warm tone for hospitality, boutiques and cozy interiors.",
         de: "Warmer Ton für Gastronomie, Boutiquen und gemütliche Innenräume.",
       },
-      image: referenceImages.lightbox,
+      image: optionImages.warmWhite,
     },
     {
       value: "4500K",
@@ -613,7 +660,7 @@ const colorTemperatureSection: ChoiceSection = {
         en: "Balanced light for most retail and office environments.",
         de: "Ausgewogenes Licht für die meisten Retail- und Office-Umgebungen.",
       },
-      image: referenceImages.illuminatedInterior,
+      image: optionImages.neutralWhite,
     },
     {
       value: "6000K",
@@ -622,7 +669,7 @@ const colorTemperatureSection: ChoiceSection = {
         en: "Cool, crisp light for high-contrast facade visibility.",
         de: "Kühles, klares Licht für kontraststarke Fassadenwirkung.",
       },
-      image: referenceImages.illuminatedOutdoor,
+      image: optionImages.coolWhite,
     },
   ],
 };
@@ -638,7 +685,7 @@ const brightnessSection: ChoiceSection = {
         en: "Subtle light for interiors and close viewing distances.",
         de: "Dezentes Licht für Innenräume und kurze Betrachtungsabstände.",
       },
-      image: referenceImages.lightbox,
+      image: optionImages.lowBrightness,
     },
     {
       value: "medium",
@@ -647,7 +694,7 @@ const brightnessSection: ChoiceSection = {
         en: "Balanced default brightness for everyday retail visibility.",
         de: "Ausgewogene Standardhelligkeit für alltägliche Retail-Sichtbarkeit.",
       },
-      image: referenceImages.illuminatedInterior,
+      image: optionImages.mediumBrightness,
     },
     {
       value: "high",
@@ -656,7 +703,7 @@ const brightnessSection: ChoiceSection = {
         en: "Stronger brightness for outdoor facades and longer distance viewing.",
         de: "Stärkere Helligkeit für Außenfassaden und größere Sichtweiten.",
       },
-      image: referenceImages.illuminatedOutdoor,
+      image: optionImages.highBrightness,
     },
   ],
 };
