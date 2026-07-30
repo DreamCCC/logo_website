@@ -43,18 +43,16 @@ export function AuthCard({ mode }: { mode: AuthMode }) {
   }
 
   return (
-    <main className="min-h-screen bg-black px-6 pt-32 text-white">
-      <div className="mx-auto max-w-md rounded-[32px] border border-white/10 bg-neutral-950 p-8">
-        <div className="mb-8">
-          <div className="mb-3 text-sm uppercase tracking-[0.25em] text-neutral-500">
-            KS. Logo
-          </div>
-          <h1 className="text-4xl font-light">
+    <main className="ls-auth-page">
+      <div className="ls-auth-card">
+        <div>
+          <div className="eyebrow">LumaSign Europe</div>
+          <h1>
             {mode === "login" ? t.auth.login : t.auth.register}
           </h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="grid gap-4">
+        <form onSubmit={handleSubmit}>
           <Input label={t.auth.email} name="email" type="email" required />
           <Input
             label={t.auth.password}
@@ -71,19 +69,20 @@ export function AuthCard({ mode }: { mode: AuthMode }) {
             </>
           )}
 
-          {error && <div className="rounded-2xl bg-red-500/10 p-3 text-sm text-red-200">{error}</div>}
+          {error && <div className="ls-form-error">{error}</div>}
 
           <button
+            type="submit"
             disabled={loading}
-            className="mt-2 rounded-2xl bg-white px-5 py-4 text-sm font-medium text-black transition hover:bg-neutral-200 disabled:opacity-60"
+            className="button primary"
           >
             {loading ? "..." : mode === "login" ? t.auth.login : t.auth.register}
           </button>
         </form>
 
-        <div className="mt-6 text-sm text-neutral-400">
+        <div className="mt-6 text-sm ls-muted">
           {mode === "login" ? t.auth.noAccount : t.auth.hasAccount}{" "}
-          <Link className="text-white underline" href={mode === "login" ? "/register" : "/login"}>
+          <Link className="ls-inline-link" href={mode === "login" ? "/register" : "/login"}>
             {mode === "login" ? t.auth.register : t.auth.login}
           </Link>
         </div>
@@ -106,10 +105,9 @@ function Input({
   minLength?: number;
 }) {
   return (
-    <label className="grid gap-2 text-sm text-neutral-300">
+    <label>
       {label}
       <input
-        className="rounded-2xl border border-white/10 bg-black px-4 py-3 text-white outline-none transition focus:border-white/40"
         name={name}
         type={type}
         required={required}

@@ -37,6 +37,7 @@ class AuthResponse(BaseModel):
 
 class QuoteFilePublic(BaseModel):
     id: int
+    file_name: str
     original_name: str
     mime_type: str
     file_size: int
@@ -127,7 +128,6 @@ class AdminQuotePublic(QuotePublic):
 
 class AdminQuoteFilePublic(QuoteFilePublic):
     quote_id: int
-    file_name: str
     file_path: str
 
 

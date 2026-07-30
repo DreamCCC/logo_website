@@ -16,6 +16,12 @@ from app.services.pricing import calculate_starting_price
 router = APIRouter(prefix="/quotes", tags=["quotes"])
 
 ALLOWED_MIME_PREFIXES = ("image/", "application/pdf")
+ALLOWED_DESIGN_MIME_TYPES = {
+    "application/postscript",
+    "application/illustrator",
+    "application/octet-stream",
+}
+ALLOWED_EXTENSIONS = {".svg", ".ai", ".eps", ".pdf", ".png", ".jpg", ".jpeg", ".webp"}
 
 
 @router.get("/my", response_model=list[QuotePublic])
@@ -35,6 +41,7 @@ def list_my_quotes(
 @router.post("/starting-price", response_model=StartingPriceResponse)
 def preview_starting_price(
     project_type: str | None = Form(default=None),
+    variant: str | None = Form(default=None),
     material: str | None = Form(default=None),
     width_mm: int | None = Form(default=None),
     height_mm: int | None = Form(default=None),
@@ -43,7 +50,7 @@ def preview_starting_price(
 ) -> StartingPriceResponse:
     price, label = calculate_starting_price(
         db,
-        project_type=project_type,
+        project_type=_pricing_project_type(project_type, variant),
         material=material,
         width_mm=width_mm,
         height_mm=height_mm,
@@ -55,23 +62,34 @@ def preview_starting_price(
 @router.post("", response_model=QuotePublic, status_code=status.HTTP_201_CREATED)
 async def create_quote(
     application_type: str = Form(...),
-    width_mm: int = Form(...),
-    height_mm: int = Form(...),
+    product_family: str | None = Form(default=None),
+    variant: str | None = Form(default=None),
+    usage: str | None = Form(default=None),
+    design_style: str | None = Form(default=None),
+    width_value: float | None = Form(default=None),
+    unit: str | None = Form(default=None),
+    width_mm: int | None = Form(default=None),
+    height_mm: int | None = Form(default=None),
     depth_mm: int | None = Form(default=None),
     quantity: int = Form(default=1),
-    material: str = Form(...),
+    material: str | None = Form(default=None),
     main_material: str | None = Form(default=None),
     edge_material: str | None = Form(default=None),
     front_cover_material: str | None = Form(default=None),
     lighting_type: str | None = Form(default=None),
     color_temp: str | None = Form(default=None),
     brightness: str | None = Form(default=None),
+    light_color: str | None = Form(default=None),
     need_installation: bool = Form(default=False),
     installation_scene: str | None = Form(default=None),
     installation_method: str | None = Form(default=None),
+    mounting: str | None = Form(default=None),
+    deadline: str | None = Form(default=None),
     country: str | None = Form(default=None),
     postal_code: str | None = Form(default=None),
     city: str | None = Form(default=None),
+    delivery_company: str | None = Form(default=None),
+    delivery_contact: str | None = Form(default=None),
     reference_url: str | None = Form(default=None),
     customer_notes: str | None = Form(default=None),
     locale: str = Form(default="en"),
@@ -83,60 +101,103 @@ async def create_quote(
     if quantity < 1:
         raise HTTPException(status_code=400, detail="Quantity must be at least 1")
 
+    normalized_width_mm = width_mm or _to_millimetres(width_value, unit)
+    if normalized_width_mm is None or normalized_width_mm < 1:
+        raise HTTPException(status_code=400, detail="Width must be greater than zero")
+
+    resolved_product_family = product_family or application_type
+    resolved_usage = usage or installation_scene
+    resolved_mounting = mounting or installation_method
+    resolved_material = material or "custom"
+
     price, label = calculate_starting_price(
         db,
-        project_type=application_type,
-        material=material,
-        width_mm=width_mm,
+        project_type=_pricing_project_type(resolved_product_family, variant),
+        material=resolved_material,
+        width_mm=normalized_width_mm,
         height_mm=height_mm,
         locale=locale,
     )
 
     form_payload = {
         "applicationType": application_type,
+        "product": {
+            "family": resolved_product_family,
+            "variant": variant,
+            "usage": resolved_usage,
+        },
         "dimensions": {
-            "widthMm": width_mm,
+            "widthValue": width_value,
+            "unit": unit,
+            "widthMm": normalized_width_mm,
             "heightMm": height_mm,
             "depthMm": depth_mm,
         },
         "quantity": quantity,
-        "material": material,
+        "material": resolved_material,
         "materials": {
             "mainMaterial": main_material,
             "edgeMaterial": edge_material,
             "frontCoverMaterial": front_cover_material,
         },
-        "lightingType": lighting_type,
+        "design": {
+            "style": design_style,
+        },
+        "lightingType": lighting_type or light_color,
         "colorTemperature": color_temp,
         "brightness": brightness,
+        "lighting": {
+            "type": lighting_type,
+            "color": light_color,
+            "colorTemperature": color_temp,
+            "brightness": brightness,
+        },
         "installation": {
             "needed": need_installation,
-            "scene": installation_scene,
-            "method": installation_method,
+            "scene": resolved_usage,
+            "method": resolved_mounting,
             "country": country,
             "postalCode": postal_code,
             "city": city,
         },
+        "deadline": deadline,
+        "delivery": {
+            "country": country,
+            "cityPostal": city,
+            "company": delivery_company,
+            "contact": delivery_contact,
+        },
         "referenceUrl": reference_url,
         "submittedFields": {
             "application_type": application_type,
-            "width_mm": width_mm,
+            "product_family": resolved_product_family,
+            "variant": variant,
+            "usage": resolved_usage,
+            "design_style": design_style,
+            "width_value": width_value,
+            "unit": unit,
+            "width_mm": normalized_width_mm,
             "height_mm": height_mm,
             "depth_mm": depth_mm,
             "quantity": quantity,
-            "material": material,
+            "material": resolved_material,
             "main_material": main_material,
             "edge_material": edge_material,
             "front_cover_material": front_cover_material,
             "lighting_type": lighting_type,
             "color_temp": color_temp,
             "brightness": brightness,
+            "light_color": light_color,
             "need_installation": need_installation,
-            "installation_scene": installation_scene,
-            "installation_method": installation_method,
+            "installation_scene": resolved_usage,
+            "installation_method": resolved_mounting,
+            "mounting": resolved_mounting,
+            "deadline": deadline,
             "country": country,
             "postal_code": postal_code,
             "city": city,
+            "delivery_company": delivery_company,
+            "delivery_contact": delivery_contact,
             "reference_url": reference_url,
             "locale": locale,
         },
@@ -146,7 +207,7 @@ async def create_quote(
         quote_number=f"TEMP-{uuid4().hex[:12]}",
         user_id=current_user.id,
         status="submitted",
-        project_type=application_type,
+        project_type=resolved_product_family,
         indicative_price=price,
         indicative_price_label=label,
         locale=locale if locale in {"en", "de"} else "en",
@@ -172,7 +233,12 @@ async def create_quote(
 
 
 async def _store_upload(upload: UploadFile, quote_id: int, settings: Settings) -> QuoteFile:
-    if not any((upload.content_type or "").startswith(prefix) for prefix in ALLOWED_MIME_PREFIXES):
+    extension = Path(upload.filename or "").suffix.lower()
+    content_type = upload.content_type or "application/octet-stream"
+    mime_allowed = any(content_type.startswith(prefix) for prefix in ALLOWED_MIME_PREFIXES)
+    if content_type in ALLOWED_DESIGN_MIME_TYPES and extension in {".ai", ".eps"}:
+        mime_allowed = True
+    if not mime_allowed or extension not in ALLOWED_EXTENSIONS:
         raise HTTPException(status_code=400, detail=f"Unsupported file type: {upload.content_type}")
 
     content = await upload.read()
@@ -180,7 +246,6 @@ async def _store_upload(upload: UploadFile, quote_id: int, settings: Settings) -
     if len(content) > max_size:
         raise HTTPException(status_code=400, detail="File is too large")
 
-    extension = Path(upload.filename).suffix.lower()
     safe_name = f"{uuid4().hex}{extension}"
     quote_dir = settings.upload_dir / str(quote_id)
     quote_dir.mkdir(parents=True, exist_ok=True)
@@ -191,8 +256,24 @@ async def _store_upload(upload: UploadFile, quote_id: int, settings: Settings) -
         quote_id=quote_id,
         file_name=safe_name,
         original_name=upload.filename,
-        mime_type=upload.content_type or "application/octet-stream",
+        mime_type=content_type,
         file_size=len(content),
         file_path=str(target),
-        file_role="logo",
+        file_role="design",
     )
+
+
+def _to_millimetres(value: float | None, unit: str | None) -> int | None:
+    if value is None:
+        return None
+    normalized_unit = (unit or "mm").lower()
+    multiplier = {"mm": 1, "cm": 10, "m": 1000}.get(normalized_unit)
+    if multiplier is None:
+        raise HTTPException(status_code=400, detail="Unsupported dimension unit")
+    return round(value * multiplier)
+
+
+def _pricing_project_type(project_type: str | None, variant: str | None) -> str | None:
+    if project_type == "letters" and variant == "non_lit":
+        return "letters_non_lit"
+    return project_type

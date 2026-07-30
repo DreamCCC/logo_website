@@ -18,6 +18,12 @@ DEFAULT_BY_PROJECT_TYPE = {
     "illuminated_logo": Decimal("450.00"),
     "lightbox": Decimal("650.00"),
     "side_mounted_logo": Decimal("750.00"),
+    "letters_non_lit": Decimal("299.00"),
+    "letters": Decimal("450.00"),
+    "lightboxes": Decimal("650.00"),
+    "neon": Decimal("450.00"),
+    "infinity_mirror": Decimal("650.00"),
+    "custom_concept": Decimal("750.00"),
 }
 
 

@@ -207,12 +207,12 @@ export default function AdminPage() {
 
   if (error) {
     return (
-      <main className="min-h-screen bg-black px-6 pt-32 text-white">
-        <div className="mx-auto max-w-xl rounded-[32px] border border-white/10 bg-neutral-950 p-8">
-          <div className="mb-3 text-sm uppercase tracking-[0.25em] text-neutral-500">Admin</div>
-          <h1 className="text-4xl font-light">Access unavailable</h1>
-          <p className="mt-4 text-neutral-400">{error}</p>
-          <Link href="/login" className="mt-6 inline-flex rounded-2xl bg-white px-5 py-3 text-black">
+      <main className="ls-app-page">
+        <div className="ls-app-container ls-panel">
+          <div className="eyebrow">LumaSign Admin</div>
+          <h1>Access unavailable</h1>
+          <p className="ls-muted">{error}</p>
+          <Link href="/login" className="button dark">
             Login
           </Link>
         </div>
@@ -221,61 +221,53 @@ export default function AdminPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black px-6 pb-20 pt-32 text-white">
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
+    <main className="ls-app-page ls-admin-page">
+      <div className="ls-app-container">
+        <div className="ls-page-heading">
           <div>
-            <div className="mb-3 text-sm uppercase tracking-[0.25em] text-neutral-500">
-              KS. Logo Admin
-            </div>
-            <h1 className="text-5xl font-light">Database dashboard</h1>
-            <p className="mt-4 max-w-2xl text-sm leading-6 text-neutral-400">
+            <div className="eyebrow">LumaSign Europe Admin</div>
+            <h1>Database dashboard</h1>
+            <p className="ls-muted ls-heading-copy">
               View registered users, quote requests, uploaded file metadata and configurable content
               with paginated queries.
             </p>
           </div>
-          <div className="rounded-2xl border border-white/10 bg-neutral-950 px-5 py-3 text-sm text-neutral-300">
+          <div className="ls-admin-identity">
             {me?.email || "Admin"}
           </div>
         </div>
 
         {summary && (
-          <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="ls-admin-stats">
             {tabs.map((tab) => (
               <button
                 key={tab.key}
                 type="button"
                 onClick={() => switchTab(tab.key)}
-                className={`rounded-[28px] border p-5 text-left transition ${
-                  activeTab === tab.key
-                    ? "border-white bg-white text-black"
-                    : "border-white/10 bg-neutral-950 text-white hover:border-white/30"
-                }`}
+                className={activeTab === tab.key ? "ls-admin-stat active" : "ls-admin-stat"}
               >
-                <div className="text-xs uppercase tracking-[0.2em] opacity-60">{tab.label}</div>
-                <div className="mt-3 text-3xl font-light">{summary[tab.summaryKey]}</div>
+                <div>{tab.label}</div>
+                <strong>{summary[tab.summaryKey]}</strong>
               </button>
             ))}
           </div>
         )}
 
-        <section className="rounded-[32px] border border-white/10 bg-neutral-950 p-6">
-          <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <section className="ls-panel ls-admin-data">
+          <div className="ls-admin-data-heading">
             <div>
-              <div className="text-sm uppercase tracking-[0.25em] text-neutral-500">
-                {activeConfig.label}
-              </div>
-              <h2 className="mt-2 text-3xl font-light">
+              <div className="eyebrow">{activeConfig.label}</div>
+              <h2>
                 {data ? `${data.total} records` : loading ? "Loading" : "No records"}
               </h2>
             </div>
             {data && (
-              <div className="flex items-center gap-3 text-sm text-neutral-300">
+              <div className="ls-pagination">
                 <button
                   type="button"
                   disabled={data.page <= 1}
                   onClick={() => setPage((value) => Math.max(1, value - 1))}
-                  className="rounded-2xl border border-white/15 px-4 py-2 disabled:opacity-40"
+                  className="button outline"
                 >
                   Previous
                 </button>
@@ -286,7 +278,7 @@ export default function AdminPage() {
                   type="button"
                   disabled={data.page >= data.pages}
                   onClick={() => setPage((value) => value + 1)}
-                  className="rounded-2xl border border-white/15 px-4 py-2 disabled:opacity-40"
+                  className="button outline"
                 >
                   Next
                 </button>
@@ -295,15 +287,15 @@ export default function AdminPage() {
           </div>
 
           {notice && (
-            <div className="mb-5 rounded-2xl bg-white/10 px-4 py-3 text-sm text-neutral-200">
+            <div className="ls-admin-notice">
               {notice}
             </div>
           )}
 
           {loading ? (
-            <div className="rounded-[24px] bg-black/40 p-6 text-neutral-400">Loading data...</div>
+            <div className="ls-admin-empty">Loading data...</div>
           ) : data && data.items.length > 0 ? (
-            <div className="grid gap-4">
+            <div className="ls-card-grid">
               {data.items.map((row, index) => (
                 <RecordCard
                   key={String(row.id ?? row.quote_number ?? index)}
@@ -317,7 +309,7 @@ export default function AdminPage() {
               ))}
             </div>
           ) : (
-            <div className="rounded-[24px] bg-black/40 p-6 text-neutral-400">No data yet.</div>
+            <div className="ls-admin-empty">No data yet.</div>
           )}
         </section>
       </div>
@@ -345,25 +337,25 @@ function RecordCard({
   const isPrimaryAdmin = String(row.email || "").toLowerCase() === PRIMARY_ADMIN_EMAIL;
 
   return (
-    <article className="rounded-[28px] border border-white/10 bg-black/35 p-5">
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+    <article className="ls-admin-record">
+      <div className="ls-admin-field-grid">
         {columns.map((column) => (
-          <div key={column.key} className="rounded-2xl bg-white/5 p-4">
-            <div className="text-xs uppercase tracking-[0.16em] text-neutral-500">{column.label}</div>
-            <div className="mt-2 break-words text-sm text-neutral-100">
+          <div key={column.key} className="ls-admin-field">
+            <div>{column.label}</div>
+            <strong>
               {column.render ? column.render(row) : formatValue(getValue(row, column.key))}
-            </div>
+            </strong>
           </div>
         ))}
       </div>
 
       {showAdminActions && userId && (
-        <div className="mt-4 flex flex-wrap items-center gap-3">
+        <div className="ls-admin-actions">
           <button
             type="button"
             disabled={!canManageAdmins || isAdmin}
             onClick={() => onSetAdminRole(userId, true)}
-            className="rounded-2xl bg-white px-4 py-2 text-sm text-black disabled:opacity-40"
+            className="button primary"
           >
             Set admin
           </button>
@@ -371,12 +363,12 @@ function RecordCard({
             type="button"
             disabled={!canManageAdmins || !isAdmin || isPrimaryAdmin}
             onClick={() => onSetAdminRole(userId, false)}
-            className="rounded-2xl border border-white/15 px-4 py-2 text-sm text-white disabled:opacity-40"
+            className="button outline"
           >
             Remove admin
           </button>
           {!canManageAdmins && (
-            <span className="text-sm text-neutral-500">
+            <span className="ls-muted">
               Only {PRIMARY_ADMIN_EMAIL} can change admin roles.
             </span>
           )}
@@ -393,7 +385,11 @@ function QuoteRequestDetails({ row }: { row: AdminRecord }) {
   const user = toRecord(row.user);
   const dimensions = toRecord(payload.dimensions);
   const materials = toRecord(payload.materials);
+  const product = toRecord(payload.product);
+  const design = toRecord(payload.design);
+  const lighting = toRecord(payload.lighting);
   const installation = toRecord(payload.installation);
+  const delivery = toRecord(payload.delivery);
   const files = Array.isArray(row.files) ? row.files.filter(isRecord) : [];
 
   const sections = [
@@ -403,6 +399,8 @@ function QuoteRequestDetails({ row }: { row: AdminRecord }) {
         detail("Email", getValue(user, "email")),
         detail("Company", getValue(user, "company_name")),
         detail("Contact", getValue(user, "contact_name")),
+        detail("Delivery company", delivery.company),
+        detail("Delivery contact", delivery.contact),
         detail("Language", row.locale),
         detail("Submitted", row.created_at),
       ],
@@ -411,7 +409,12 @@ function QuoteRequestDetails({ row }: { row: AdminRecord }) {
       title: "Project",
       fields: [
         detail("Quote number", row.quote_number),
-        detail("Project type", labelValue(payload.applicationType ?? row.project_type)),
+        detail(
+          "Product family",
+          labelValue(product.family ?? payload.applicationType ?? row.project_type),
+        ),
+        detail("Variant", labelValue(product.variant)),
+        detail("Usage", labelValue(product.usage ?? installation.scene)),
         detail("Status", row.status),
         detail("Indicative starting price", row.indicative_price_label),
       ],
@@ -419,6 +422,10 @@ function QuoteRequestDetails({ row }: { row: AdminRecord }) {
     {
       title: "Size and quantity",
       fields: [
+        detail(
+          "Requested width",
+          formatRequestedMeasurement(dimensions.widthValue, dimensions.unit),
+        ),
         detail("Width", formatMeasurement(dimensions.widthMm)),
         detail("Height", formatMeasurement(dimensions.heightMm)),
         detail("Depth", formatMeasurement(dimensions.depthMm)),
@@ -437,9 +444,10 @@ function QuoteRequestDetails({ row }: { row: AdminRecord }) {
     {
       title: "Lighting",
       fields: [
-        detail("Lighting type", labelValue(payload.lightingType)),
-        detail("Color temperature", payload.colorTemperature),
-        detail("Brightness", labelValue(payload.brightness)),
+        detail("Lighting type", labelValue(lighting.type ?? payload.lightingType)),
+        detail("Light colour", labelValue(lighting.color)),
+        detail("Color temperature", lighting.colorTemperature ?? payload.colorTemperature),
+        detail("Brightness", labelValue(lighting.brightness ?? payload.brightness)),
       ],
     },
     {
@@ -448,55 +456,71 @@ function QuoteRequestDetails({ row }: { row: AdminRecord }) {
         detail("Installation needed", formatBoolean(installation.needed)),
         detail("Installation scene", labelValue(installation.scene)),
         detail("Installation method", labelValue(installation.method)),
-        detail("Country", installation.country),
-        detail("Postal code", installation.postalCode),
-        detail("City", installation.city),
       ],
     },
     {
-      title: "Logo, reference and notes",
+      title: "Design and notes",
       fields: [
+        detail("Preferred font / style", design.style),
+        detail("Deadline", payload.deadline),
         detail("Reference URL", payload.referenceUrl),
         detail("Customer notes", row.customer_notes),
+      ],
+    },
+    {
+      title: "Delivery",
+      fields: [
+        detail("Country", delivery.country ?? installation.country),
+        detail("City / postcode", delivery.cityPostal ?? installation.city),
+        detail("Postal code", installation.postalCode),
       ],
     },
   ];
 
   return (
-    <div className="mt-5 rounded-[26px] border border-white/10 bg-neutral-950 p-5">
-      <div className="mb-5 text-sm uppercase tracking-[0.2em] text-neutral-500">
-        Quote request details
-      </div>
-      <div className="grid gap-4 lg:grid-cols-2">
+    <div className="ls-admin-quote-details">
+      <div className="eyebrow">Quote request details</div>
+      <div className="ls-admin-detail-grid">
         {sections.map((section) => (
-          <section key={section.title} className="rounded-[22px] bg-white/5 p-5">
-            <h3 className="text-lg font-light text-white">{section.title}</h3>
-            <div className="mt-4 grid gap-3">
+          <section key={section.title} className="ls-admin-detail-section">
+            <h3>{section.title}</h3>
+            <div className="ls-admin-detail-fields">
               {section.fields.map((field) => (
-                <div key={field.label} className="grid gap-1 text-sm">
-                  <div className="text-neutral-500">{field.label}</div>
-                  <div className="break-words text-neutral-100">{field.value}</div>
+                <div key={field.label}>
+                  <span>{field.label}</span>
+                  <strong>{field.value}</strong>
                 </div>
               ))}
             </div>
           </section>
         ))}
-        <section className="rounded-[22px] bg-white/5 p-5 lg:col-span-2">
-          <h3 className="text-lg font-light text-white">Uploaded files</h3>
+        <section className="ls-admin-detail-section ls-admin-files-section">
+          <h3>Uploaded files</h3>
           {files.length > 0 ? (
-            <div className="mt-4 grid gap-3 md:grid-cols-2">
+            <div className="ls-admin-files">
               {files.map((file) => (
-                <div key={String(file.id ?? file.original_name)} className="rounded-2xl bg-black/35 p-4 text-sm">
-                  <div className="break-words text-neutral-100">{formatValue(file.original_name)}</div>
-                  <div className="mt-2 text-neutral-500">
+                <div key={String(file.id ?? file.original_name)}>
+                  {typeof row.id === "number" && typeof file.file_name === "string" ? (
+                    <a
+                      className="ls-inline-link"
+                      href={`/uploads/${row.id}/${encodeURIComponent(file.file_name)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {formatValue(file.original_name)}
+                    </a>
+                  ) : (
+                    <strong>{formatValue(file.original_name)}</strong>
+                  )}
+                  <span>
                     {formatValue(file.mime_type)} · {formatFileSize(file.file_size)}
-                  </div>
-                  <div className="mt-1 text-neutral-500">Uploaded: {formatValue(file.created_at)}</div>
+                  </span>
+                  <span>Uploaded: {formatValue(file.created_at)}</span>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="mt-4 text-sm text-neutral-400">No files uploaded.</div>
+            <div className="ls-muted">No files uploaded.</div>
           )}
         </section>
       </div>
@@ -530,6 +554,13 @@ const readableValues: Record<string, string> = {
   illuminated_logo: "Illuminated logo",
   lightbox: "Lightbox",
   side_mounted_logo: "Side-mounted logo",
+  letters: "Letters",
+  lightboxes: "Lightboxes",
+  neon: "LED Neon",
+  infinity_mirror: "Infinity Mirror",
+  custom_concept: "Custom concept",
+  front_lit: "Front-lit",
+  back_lit: "Back-lit",
   painted_wood: "Painted wood",
   acrylic: "Acrylic",
   aluminium_composite: "Aluminium composite panel",
@@ -538,11 +569,40 @@ const readableValues: Record<string, string> = {
   backlit: "Backlit",
   frontlit: "Frontlit",
   side_lit: "Side lit",
+  full_lit: "Fully illuminated",
+  non_lit: "Non-illuminated",
+  fabric_lightbox: "Fabric lightbox",
+  retail_column: "Retail column",
+  store_concept: "Store concept",
+  modular_cubes: "Modular cubes",
+  event_display: "Event display",
+  character_neon: "Character neon",
+  colour_lettering: "Colour lettering",
+  brand_logo_neon: "Brand logo neon",
+  text_mirror_box: "Text mirror box",
+  experience_installation: "Experience installation",
+  tunnel_wall: "Tunnel wall",
+  facade_concept: "Facade concept",
+  pylon_landmark: "Pylon & wayfinding",
+  exhibition_event: "Exhibition & event",
+  interior_branding: "Interior branding",
+  special_build: "Special build",
   low: "Low",
   medium: "Medium",
   high: "High",
   indoor: "Indoor installation",
   outdoor: "Outdoor installation",
+  both: "Indoor & outdoor",
+  warm_white: "Warm white",
+  neutral_white: "Neutral white",
+  cool_white: "Cool white",
+  rgb: "RGB / colour changing",
+  unlit: "Unlit",
+  open: "Not decided",
+  preassembled_rail: "Preassembled on panel / rail",
+  direct_wall: "Directly on wall / facade",
+  projecting_double_sided: "Projecting / double-sided",
+  freestanding_special: "Freestanding / special build",
   individual_letters: "Individual letters mounted separately",
   letters_on_metal_beam: "Letters mounted on a support bar",
   logo_backboard: "Logo mounted on a back panel",
@@ -565,6 +625,11 @@ function formatBoolean(value: unknown): unknown {
 function formatMeasurement(value: unknown): unknown {
   if (value === null || value === undefined || value === "") return value;
   return `${value} mm`;
+}
+
+function formatRequestedMeasurement(value: unknown, unit: unknown): unknown {
+  if (value === null || value === undefined || value === "") return null;
+  return `${value} ${typeof unit === "string" && unit ? unit : ""}`.trim();
 }
 
 function formatFileSize(value: unknown): string {

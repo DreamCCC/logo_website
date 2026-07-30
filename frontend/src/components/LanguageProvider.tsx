@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { Locale, copy } from "@/lib/i18n";
 
 type LanguageContextValue = {
@@ -10,23 +10,26 @@ type LanguageContextValue = {
 };
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
-const STORAGE_KEY = "ks-logo-locale";
+const STORAGE_KEY = "lumasign-locale";
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>(() => {
-    if (typeof window !== "undefined") {
-      const stored = window.localStorage.getItem(STORAGE_KEY);
-      if (stored === "en" || stored === "de") {
-        return stored;
-      }
-    }
-    return "de";
-  });
+  const [locale, setLocaleState] = useState<Locale>("de");
 
   const setLocale = (nextLocale: Locale) => {
     setLocaleState(nextLocale);
     window.localStorage.setItem(STORAGE_KEY, nextLocale);
   };
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    if (stored !== "en" && stored !== "de") return;
+    const timer = window.setTimeout(() => setLocaleState(stored), 0);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
 
   const value = useMemo(
     () => ({

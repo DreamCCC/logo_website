@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    app_name: str = "Logo Quote Portal API"
+    app_name: str = "LumaSign Europe API"
     environment: str = "development"
     api_prefix: str = "/api"
 

@@ -57,6 +57,71 @@ PRODUCTS = [
         "specs_json": {"mounting": "side-mounted", "application": "facade projection"},
         "sort_order": 40,
     },
+    {
+        "slug": "lumasign-letters",
+        "name_en": "Letters",
+        "name_de": "Buchstaben",
+        "description_en": "Custom illuminated or non-illuminated 2D and 3D logo letters.",
+        "description_de": "Individuelle beleuchtete oder unbeleuchtete 2D- und 3D-Logobuchstaben.",
+        "category": "letters",
+        "material": "acrylic",
+        "base_price": Decimal("450.00"),
+        "image_url": "/lumasign/projects/letters-backlit-number.webp",
+        "specs_json": {"variants": ["front_lit", "side_lit", "back_lit", "full_lit", "non_lit"]},
+        "sort_order": 100,
+    },
+    {
+        "slug": "lumasign-lightboxes",
+        "name_en": "Lightboxes",
+        "name_de": "Leuchtkästen",
+        "description_en": "Illuminated displays for retail, facades, events and projecting signs.",
+        "description_de": "Leuchtdisplays für Retail, Fassaden, Events und Ausleger.",
+        "category": "lightboxes",
+        "material": "lightbox",
+        "base_price": Decimal("650.00"),
+        "image_url": "/lumasign/projects/lightbox-fabric-retail.jpeg",
+        "specs_json": {"application": "indoor/outdoor"},
+        "sort_order": 110,
+    },
+    {
+        "slug": "lumasign-neon",
+        "name_en": "LED Neon",
+        "name_de": "LED Neon",
+        "description_en": "Custom LED neon lettering, characters and brand logos.",
+        "description_de": "Individuelle LED-Neon-Schriftzüge, Figuren und Markenlogos.",
+        "category": "neon",
+        "material": "acrylic",
+        "base_price": Decimal("450.00"),
+        "image_url": "/lumasign/projects/neon-custom-color-sign.jpg",
+        "specs_json": {"lighting": "LED neon"},
+        "sort_order": 120,
+    },
+    {
+        "slug": "lumasign-infinity-mirror",
+        "name_en": "Infinity Mirror",
+        "name_de": "Infinity Mirror",
+        "description_en": "Mirrored LED displays with a deep tunnel effect.",
+        "description_de": "Verspiegelte LED-Displays mit räumlichem Tiefeneffekt.",
+        "category": "infinity_mirror",
+        "material": "acrylic",
+        "base_price": Decimal("650.00"),
+        "image_url": "/lumasign/projects/neon-infinity-mirror.jpg",
+        "specs_json": {"lighting": "LED mirror"},
+        "sort_order": 130,
+    },
+    {
+        "slug": "lumasign-custom-concept",
+        "name_en": "Custom concept",
+        "name_de": "Nach individuellem Konzept",
+        "description_en": "Complete signage concepts for facades, events, pylons and interiors.",
+        "description_de": "Komplette Beschilderungskonzepte für Fassaden, Events, Pylone und Innenräume.",
+        "category": "custom_concept",
+        "material": "custom",
+        "base_price": Decimal("750.00"),
+        "image_url": "/lumasign/projects/xpeng-mitsubishi-facade.jpg",
+        "specs_json": {"scope": "custom"},
+        "sort_order": 140,
+    },
 ]
 
 GALLERY = [
@@ -110,17 +175,61 @@ STARTING_RULES = [
         "starting_price": Decimal("750.00"),
         "sort_order": 40,
     },
+    {
+        "name": "LumaSign non-illuminated letters starting price",
+        "project_type": "letters_non_lit",
+        "material": "acrylic",
+        "starting_price": Decimal("299.00"),
+        "sort_order": 100,
+    },
+    {
+        "name": "LumaSign illuminated letters starting price",
+        "project_type": "letters",
+        "material": "acrylic",
+        "starting_price": Decimal("450.00"),
+        "sort_order": 110,
+    },
+    {
+        "name": "LumaSign lightboxes starting price",
+        "project_type": "lightboxes",
+        "material": "lightbox",
+        "starting_price": Decimal("650.00"),
+        "sort_order": 120,
+    },
+    {
+        "name": "LumaSign neon starting price",
+        "project_type": "neon",
+        "material": "acrylic",
+        "starting_price": Decimal("450.00"),
+        "sort_order": 130,
+    },
+    {
+        "name": "LumaSign infinity mirror starting price",
+        "project_type": "infinity_mirror",
+        "material": "acrylic",
+        "starting_price": Decimal("650.00"),
+        "sort_order": 140,
+    },
+    {
+        "name": "LumaSign custom concept starting price",
+        "project_type": "custom_concept",
+        "material": "custom",
+        "starting_price": Decimal("750.00"),
+        "sort_order": 150,
+    },
 ]
 
 
 def main() -> None:
     with SessionLocal() as db:
-        if not db.query(Product).first():
-            db.add_all(Product(**item) for item in PRODUCTS)
+        for item in PRODUCTS:
+            if not db.query(Product).filter(Product.slug == item["slug"]).first():
+                db.add(Product(**item))
         if not db.query(GalleryItem).first():
             db.add_all(GalleryItem(**item) for item in GALLERY)
-        if not db.query(StartingPriceRule).first():
-            db.add_all(StartingPriceRule(**item) for item in STARTING_RULES)
+        for item in STARTING_RULES:
+            if not db.query(StartingPriceRule).filter(StartingPriceRule.name == item["name"]).first():
+                db.add(StartingPriceRule(**item))
         db.commit()
     print("Seed data inserted.")
 
