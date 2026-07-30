@@ -1365,6 +1365,35 @@ textarea {
   border-radius: 7px;
 }
 
+input::placeholder,
+textarea::placeholder {
+  color: #b4b8b2;
+  opacity: 1;
+  font-weight: 500;
+}
+
+select.is-placeholder {
+  color: #b4b8b2;
+  font-weight: 500;
+}
+
+select:not(.is-placeholder) {
+  color: var(--ink);
+}
+
+select option {
+  color: var(--ink);
+}
+
+select option[value=""] {
+  color: #b4b8b2;
+}
+
+input[type="date"]:invalid,
+input[type="date"].is-placeholder {
+  color: #b4b8b2;
+}
+
 textarea {
   min-height: 118px;
   resize: vertical;

@@ -1,5 +1,6 @@
 from datetime import datetime
 from pathlib import Path
+from secrets import token_urlsafe
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
@@ -10,7 +11,7 @@ from app.config import Settings, get_settings
 from app.db import get_db
 from app.models import Quote, QuoteFile, User
 from app.schemas import QuotePublic, StartingPriceResponse
-from app.security import get_current_user
+from app.security import get_current_user, get_optional_user, hash_password
 from app.services.pricing import calculate_starting_price
 
 router = APIRouter(prefix="/quotes", tags=["quotes"])
@@ -42,6 +43,8 @@ ALLOWED_EXTENSIONS = {
     ".heic",
     ".heif",
 }
+
+GUEST_QUOTE_EMAIL = "guest-quotes@lumasign.eu"
 
 
 @router.get("/my", response_model=list[QuotePublic])
@@ -117,10 +120,13 @@ async def create_quote(
     files: list[UploadFile] = File(default=[]),
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
-    current_user: User = Depends(get_current_user),
+    current_user: User | None = Depends(get_optional_user),
 ) -> QuotePublic:
     if quantity < 1:
         raise HTTPException(status_code=400, detail="Quantity must be at least 1")
+
+    if not (delivery_contact or "").strip():
+        raise HTTPException(status_code=400, detail="Delivery contact is required")
 
     normalized_width_mm = width_mm or _to_millimetres(width_value, unit)
     if normalized_width_mm is None or normalized_width_mm < 1:
@@ -130,6 +136,7 @@ async def create_quote(
     resolved_usage = usage or installation_scene
     resolved_mounting = mounting or installation_method
     resolved_material = material or "custom"
+    owner = current_user or _get_or_create_guest_user(db)
 
     price, label = calculate_starting_price(
         db,
@@ -228,7 +235,7 @@ async def create_quote(
 
     quote = Quote(
         quote_number=f"TEMP-{uuid4().hex[:12]}",
-        user_id=current_user.id,
+        user_id=owner.id,
         status="submitted",
         project_type=resolved_product_family,
         indicative_price=price,
@@ -253,6 +260,24 @@ async def create_quote(
         select(Quote).where(Quote.id == quote.id).options(selectinload(Quote.files))
     )
     return QuotePublic.model_validate(quote)
+
+
+def _get_or_create_guest_user(db: Session) -> User:
+    guest = db.scalar(select(User).where(User.email == GUEST_QUOTE_EMAIL))
+    if guest:
+        return guest
+
+    guest = User(
+        email=GUEST_QUOTE_EMAIL,
+        password_hash=hash_password(token_urlsafe(32)),
+        company_name="Guest quote submissions",
+        contact_name="Website guest",
+        preferred_locale="de",
+        is_admin=False,
+    )
+    db.add(guest)
+    db.flush()
+    return guest
 
 
 async def _store_upload(upload: UploadFile, quote_id: int, settings: Settings) -> QuoteFile:

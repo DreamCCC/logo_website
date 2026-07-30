@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { Check, FileUp, LoaderCircle, LockKeyhole, X } from "lucide-react";
+import { Check, FileUp, LoaderCircle } from "lucide-react";
 import { apiFetch } from "@/lib/api";
 import {
   getProduct,
@@ -21,23 +21,13 @@ type QuoteFormState = {
   unit: "mm" | "cm" | "m";
   light_color: string;
   mounting: string;
-  installation_service: "needed" | "not_needed" | "open";
+  installation_service: "needed" | "not_needed" | "open" | "";
   deadline: string;
   customer_notes: string;
   country: string;
   city_postal: string;
   delivery_company: string;
   delivery_contact: string;
-};
-
-type AuthUser = {
-  id: number;
-  email: string;
-  company_name: string | null;
-  contact_name: string | null;
-  phone: string | null;
-  preferred_locale: string;
-  is_admin: boolean;
 };
 
 type QuoteResponse = {
@@ -109,12 +99,12 @@ function initialState(): QuoteFormState {
     design_style: "",
     width_value: "",
     unit: "cm",
-    light_color: "warm_white",
-    mounting: "preassembled_rail",
-    installation_service: "open",
+    light_color: "",
+    mounting: "",
+    installation_service: "",
     deadline: "",
     customer_notes: "",
-    country: "Deutschland",
+    country: "",
     city_postal: "",
     delivery_company: "",
     delivery_contact: "",
@@ -130,8 +120,6 @@ export function QuoteWizard({
   const [currentStep, setCurrentStep] = useState(0);
   const [form, setForm] = useState<QuoteFormState>(initialState);
   const [designFiles, setDesignFiles] = useState<File[]>([]);
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [authOpen, setAuthOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<QuoteResponse | null>(null);
@@ -140,22 +128,6 @@ export function QuoteWizard({
     () => getProduct(form.product_family),
     [form.product_family],
   );
-
-  useEffect(() => {
-    apiFetch<AuthUser>("/auth/me")
-      .then((authenticatedUser) => {
-        setUser(authenticatedUser);
-        setForm((current) => ({
-          ...current,
-          delivery_company: current.delivery_company || authenticatedUser.company_name || "",
-          delivery_contact:
-            current.delivery_contact ||
-            authenticatedUser.contact_name ||
-            authenticatedUser.email,
-        }));
-      })
-      .catch(() => undefined);
-  }, []);
 
   useEffect(() => {
     if (!selectedProduct) return;
@@ -181,16 +153,6 @@ export function QuoteWizard({
     }, 0);
     return () => window.clearTimeout(timer);
   }, [selectedProduct, selectedVariant, selectionVersion]);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setForm((current) => {
-        if (current.country !== "Deutschland" && current.country !== "Germany") return current;
-        return { ...current, country: locale === "de" ? "Deutschland" : "Germany" };
-      });
-    }, 0);
-    return () => window.clearTimeout(timer);
-  }, [locale]);
 
   function update<K extends keyof QuoteFormState>(key: K, value: QuoteFormState[K]) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -232,7 +194,14 @@ export function QuoteWizard({
     if (step === 0) return Boolean(form.product_family);
     if (step === 1) return Boolean(form.variant);
     if (step === 2) return Boolean(form.usage);
-    if (step === 4) return Number(form.width_value) > 0 && Boolean(form.mounting);
+    if (step === 4) {
+      return (
+        Number(form.width_value) > 0 &&
+        Boolean(form.light_color) &&
+        Boolean(form.mounting) &&
+        Boolean(form.installation_service)
+      );
+    }
     if (step === 6) {
       return Boolean(
         form.country.trim() &&
@@ -257,10 +226,6 @@ export function QuoteWizard({
     event.preventDefault();
     if (!stepIsValid(6)) {
       setError(t.quote.required);
-      return;
-    }
-    if (!user) {
-      setAuthOpen(true);
       return;
     }
     await submitQuote();
@@ -301,24 +266,11 @@ export function QuoteWizard({
         body: data,
       });
       setResult(quote);
-      setAuthOpen(false);
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "Unable to submit request");
     } finally {
       setSubmitting(false);
     }
-  }
-
-  function handleAuthenticated(authenticatedUser: AuthUser) {
-    setUser(authenticatedUser);
-    setForm((current) => ({
-      ...current,
-      delivery_company: current.delivery_company || authenticatedUser.company_name || "",
-      delivery_contact:
-        current.delivery_contact || authenticatedUser.contact_name || authenticatedUser.email,
-    }));
-    setAuthOpen(false);
-    window.setTimeout(() => void submitQuote(), 0);
   }
 
   if (result) {
@@ -334,9 +286,10 @@ export function QuoteWizard({
           <strong>{result.indicative_price_label || "—"}</strong>
         </div>
         <p>{t.quote.notBinding}</p>
+        <p>{t.quote.successMail}</p>
         <div className="ls-success-actions">
-          <a className="button dark" href="/account">
-            {t.nav.account}
+          <a className="button dark" href="mailto:projects@lumasign.eu">
+            projects@lumasign.eu
           </a>
           <button
             type="button"
@@ -503,7 +456,7 @@ export function QuoteWizard({
                 step="1"
                 value={form.width_value}
                 onChange={(event) => update("width_value", event.target.value)}
-                placeholder="180"
+                placeholder={t.quote.fields.widthPlaceholder}
                 required
               />
             </label>
@@ -521,9 +474,12 @@ export function QuoteWizard({
             <label>
               {t.quote.fields.light}
               <select
+                className={form.light_color ? undefined : "is-placeholder"}
                 value={form.light_color}
                 onChange={(event) => update("light_color", event.target.value)}
+                required
               >
+                <option value="">{t.quote.pleaseChoose}</option>
                 {lightOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option[locale]}
@@ -534,9 +490,12 @@ export function QuoteWizard({
             <label>
               {t.quote.fields.mounting}
               <select
+                className={form.mounting ? undefined : "is-placeholder"}
                 value={form.mounting}
                 onChange={(event) => update("mounting", event.target.value)}
+                required
               >
+                <option value="">{t.quote.pleaseChoose}</option>
                 {mountingOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option[locale]}
@@ -547,6 +506,7 @@ export function QuoteWizard({
             <label>
               {t.quote.fields.installationService}
               <select
+                className={form.installation_service ? undefined : "is-placeholder"}
                 value={form.installation_service}
                 onChange={(event) =>
                   update(
@@ -554,7 +514,9 @@ export function QuoteWizard({
                     event.target.value as QuoteFormState["installation_service"],
                   )
                 }
+                required
               >
+                <option value="">{t.quote.pleaseChoose}</option>
                 {installationServiceOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option[locale]}
@@ -566,6 +528,7 @@ export function QuoteWizard({
               {t.quote.fields.deadline}
               <input
                 type="date"
+                className={form.deadline ? undefined : "is-placeholder"}
                 value={form.deadline}
                 onChange={(event) => update("deadline", event.target.value)}
               />
@@ -592,6 +555,7 @@ export function QuoteWizard({
               <input
                 value={form.country}
                 onChange={(event) => update("country", event.target.value)}
+                placeholder={t.quote.fields.countryPlaceholder}
                 required
               />
             </label>
@@ -600,7 +564,7 @@ export function QuoteWizard({
               <input
                 value={form.city_postal}
                 onChange={(event) => update("city_postal", event.target.value)}
-                placeholder="10115 Berlin"
+                placeholder={t.quote.fields.cityPlaceholder}
                 required
               />
             </label>
@@ -609,7 +573,7 @@ export function QuoteWizard({
               <input
                 value={form.delivery_company}
                 onChange={(event) => update("delivery_company", event.target.value)}
-                placeholder="Studio Linden"
+                placeholder={t.quote.fields.companyPlaceholder}
                 minLength={2}
                 required
               />
@@ -619,7 +583,7 @@ export function QuoteWizard({
               <input
                 value={form.delivery_contact}
                 onChange={(event) => update("delivery_contact", event.target.value)}
-                placeholder="name@company.de or +49 ..."
+                placeholder={t.quote.fields.contactPlaceholder}
                 required
               />
             </label>
@@ -658,119 +622,7 @@ export function QuoteWizard({
           {error || ""}
         </p>
       </form>
-
-      {authOpen && (
-        <InlineAuthGate
-          onClose={() => setAuthOpen(false)}
-          onAuthenticated={handleAuthenticated}
-        />
-      )}
     </>
-  );
-}
-
-function InlineAuthGate({
-  onClose,
-  onAuthenticated,
-}: {
-  onClose: () => void;
-  onAuthenticated: (user: AuthUser) => void;
-}) {
-  const { locale, t } = useLanguage();
-  const [mode, setMode] = useState<"login" | "register">("login");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function authenticate(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setLoading(true);
-    setError(null);
-    const data = Object.fromEntries(new FormData(event.currentTarget).entries());
-    try {
-      const response = await apiFetch<{ user: AuthUser }>(
-        mode === "login" ? "/auth/login" : "/auth/register",
-        {
-          method: "POST",
-          body: JSON.stringify(
-            mode === "register" ? { ...data, preferred_locale: locale } : data,
-          ),
-        },
-      );
-      onAuthenticated(response.user);
-    } catch (authError) {
-      setError(authError instanceof Error ? authError.message : "Authentication failed");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  return (
-    <div className="ls-auth-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-gate-title">
-      <div className="ls-auth-dialog">
-        <button type="button" className="ls-dialog-close" onClick={onClose} aria-label={t.auth.close}>
-          <X aria-hidden="true" />
-        </button>
-        <span className="ls-auth-lock" aria-hidden="true">
-          <LockKeyhole />
-        </span>
-        <h2 id="auth-gate-title">{t.auth.gateTitle}</h2>
-        <p>{t.auth.gateText}</p>
-        <div className="segmented-control">
-          <label>
-            <input
-              type="radio"
-              checked={mode === "login"}
-              onChange={() => setMode("login")}
-            />
-            {t.auth.login}
-          </label>
-          <label>
-            <input
-              type="radio"
-              checked={mode === "register"}
-              onChange={() => setMode("register")}
-            />
-            {t.auth.register}
-          </label>
-        </div>
-        <form className="ls-auth-form" onSubmit={authenticate}>
-          <label>
-            {t.auth.email}
-            <input name="email" type="email" required autoComplete="email" />
-          </label>
-          <label>
-            {t.auth.password}
-            <input
-              name="password"
-              type="password"
-              required
-              minLength={mode === "register" ? 8 : undefined}
-              autoComplete={mode === "login" ? "current-password" : "new-password"}
-            />
-          </label>
-          {mode === "register" && (
-            <div className="field-grid">
-              <label>
-                {t.auth.company}
-                <input name="company_name" />
-              </label>
-              <label>
-                {t.auth.contact}
-                <input name="contact_name" />
-              </label>
-              <label>
-                {t.auth.phone}
-                <input name="phone" type="tel" />
-              </label>
-            </div>
-          )}
-          {error && <div className="ls-form-error">{error}</div>}
-          <button type="submit" className="button primary" disabled={loading}>
-            {loading ? t.quote.submitting : mode === "login" ? t.auth.login : t.auth.register}
-          </button>
-        </form>
-      </div>
-    </div>
   );
 }
 
@@ -793,7 +645,8 @@ function normalizedLightColor(
   current: string,
 ): string {
   if (product === "letters" && variant === "non_lit") return "unlit";
-  return current === "unlit" ? "warm_white" : current;
+  if (current === "unlit") return "";
+  return current;
 }
 
 function productImage(product: ProductFamily): string {
