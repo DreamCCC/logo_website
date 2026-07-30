@@ -270,22 +270,11 @@ export default function Home() {
         <span>{t.customers}</span>
         <div className="customer-logo-grid">
           <Image
-            src="/lumasign/projects/customer-logos-automotive-a.png"
-            alt="Automotive clients"
-            width={1700}
-            height={260}
-          />
-          <Image
-            src="/lumasign/projects/customer-logos-brands.png"
-            alt="Brand clients"
-            width={1700}
-            height={260}
-          />
-          <Image
-            src="/lumasign/projects/customer-logos-automotive-b.png"
-            alt="Automotive clients"
-            width={1700}
-            height={260}
+            src="/lumasign/projects/customer-logos-wall.jpg"
+            alt={t.customers}
+            width={1024}
+            height={376}
+            sizes="(max-width: 1720px) 100vw, 1720px"
           />
         </div>
       </section>

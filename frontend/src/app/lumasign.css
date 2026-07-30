@@ -502,10 +502,10 @@ footer span {
 
 .customer-logo-grid img {
   display: block;
-  width: 100%;
+  width: min(1100px, 100%);
   height: auto;
+  margin: 0 auto;
   background: #000;
-  filter: grayscale(1) contrast(1.08);
 }
 
 .configurator {
