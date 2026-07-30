@@ -299,6 +299,28 @@ textarea:focus-visible {
   margin-inline: auto;
 }
 
+.ls-success-ref {
+  color: #5f6460;
+  font-size: 0.98rem;
+}
+
+.ls-success-ref strong {
+  color: #111;
+  font-weight: 850;
+}
+
+.ls-success-mail {
+  margin-top: 4px;
+  color: #6b6b6b;
+  font-size: 0.92rem;
+}
+
+.ls-success-mail a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .ls-success-icon {
   display: grid;
   place-items: center;

@@ -274,22 +274,29 @@ export function QuoteWizard({
   }
 
   if (result) {
+    const whatsappText = t.quote.whatsappPrefill.replace(
+      "{quoteNumber}",
+      result.quote_number,
+    );
+    const whatsappHref = `https://wa.me/491625727600?text=${encodeURIComponent(whatsappText)}`;
+
     return (
       <div className="quote-wizard ls-quote-success" role="status">
         <span className="ls-success-icon" aria-hidden="true">
           <Check />
         </span>
-        <p className="eyebrow">{result.quote_number}</p>
         <h3>{t.quote.success}</h3>
-        <div className="ls-price-result">
-          <span>{t.quote.indicative}</span>
-          <strong>{result.indicative_price_label || "—"}</strong>
-        </div>
-        <p>{t.quote.notBinding}</p>
-        <p>{t.quote.successMail}</p>
+        <p className="ls-success-ref">
+          {t.quote.successRef}: <strong>{result.quote_number}</strong>
+        </p>
         <div className="ls-success-actions">
-          <a className="button dark" href="mailto:projects@lumasign.eu">
-            projects@lumasign.eu
+          <a
+            className="button primary"
+            href={whatsappHref}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {t.quote.whatsappSupplement}
           </a>
           <button
             type="button"
@@ -299,11 +306,15 @@ export function QuoteWizard({
               setDesignFiles([]);
               setCurrentStep(0);
               setResult(null);
+              setError(null);
             }}
           >
-            {t.account.newQuote}
+            {t.quote.anotherRequest}
           </button>
         </div>
+        <p className="ls-success-mail">
+          <a href="mailto:projects@lumasign.eu">{t.quote.successMail}</a>
+        </p>
       </div>
     );
   }
