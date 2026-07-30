@@ -19,9 +19,29 @@ ALLOWED_MIME_PREFIXES = ("image/", "application/pdf")
 ALLOWED_DESIGN_MIME_TYPES = {
     "application/postscript",
     "application/illustrator",
+    "application/vnd.adobe.illustrator",
+    "application/eps",
+    "application/x-eps",
+    "image/x-eps",
     "application/octet-stream",
 }
-ALLOWED_EXTENSIONS = {".svg", ".ai", ".eps", ".pdf", ".png", ".jpg", ".jpeg", ".webp"}
+ALLOWED_EXTENSIONS = {
+    ".svg",
+    ".ai",
+    ".eps",
+    ".pdf",
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".jfif",
+    ".webp",
+    ".gif",
+    ".bmp",
+    ".tif",
+    ".tiff",
+    ".heic",
+    ".heif",
+}
 
 
 @router.get("/my", response_model=list[QuotePublic])
@@ -81,6 +101,7 @@ async def create_quote(
     brightness: str | None = Form(default=None),
     light_color: str | None = Form(default=None),
     need_installation: bool = Form(default=False),
+    installation_service: str | None = Form(default=None),
     installation_scene: str | None = Form(default=None),
     installation_method: str | None = Form(default=None),
     mounting: str | None = Form(default=None),
@@ -154,6 +175,7 @@ async def create_quote(
         },
         "installation": {
             "needed": need_installation,
+            "service": installation_service,
             "scene": resolved_usage,
             "method": resolved_mounting,
             "country": country,
@@ -189,6 +211,7 @@ async def create_quote(
             "brightness": brightness,
             "light_color": light_color,
             "need_installation": need_installation,
+            "installation_service": installation_service,
             "installation_scene": resolved_usage,
             "installation_method": resolved_mounting,
             "mounting": resolved_mounting,
@@ -259,7 +282,7 @@ async def _store_upload(upload: UploadFile, quote_id: int, settings: Settings) -
         mime_type=content_type,
         file_size=len(content),
         file_path=str(target),
-        file_role="design",
+        file_role="logo",
     )
 
 

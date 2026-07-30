@@ -21,6 +21,7 @@ type QuoteFormState = {
   unit: "mm" | "cm" | "m";
   light_color: string;
   mounting: string;
+  installation_service: "needed" | "not_needed" | "open";
   deadline: string;
   customer_notes: string;
   country: string;
@@ -94,6 +95,12 @@ const mountingOptions = [
   { value: "open", de: "Noch offen", en: "Not decided" },
 ];
 
+const installationServiceOptions = [
+  { value: "needed", de: "Montage durch LumaSign", en: "Installation by LumaSign" },
+  { value: "not_needed", de: "Keine Montage benötigt", en: "No installation required" },
+  { value: "open", de: "Noch offen", en: "Not decided" },
+] as const;
+
 function initialState(): QuoteFormState {
   return {
     product_family: "letters",
@@ -104,6 +111,7 @@ function initialState(): QuoteFormState {
     unit: "cm",
     light_color: "warm_white",
     mounting: "preassembled_rail",
+    installation_service: "open",
     deadline: "",
     customer_notes: "",
     country: "Deutschland",
@@ -121,7 +129,7 @@ export function QuoteWizard({
   const { locale, t } = useLanguage();
   const [currentStep, setCurrentStep] = useState(0);
   const [form, setForm] = useState<QuoteFormState>(initialState);
-  const [designFile, setDesignFile] = useState<File | null>(null);
+  const [designFiles, setDesignFiles] = useState<File[]>([]);
   const [user, setUser] = useState<AuthUser | null>(null);
   const [authOpen, setAuthOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -161,6 +169,11 @@ export function QuoteWizard({
         ...current,
         product_family: selectedProduct,
         variant: nextVariant,
+        light_color: normalizedLightColor(
+          selectedProduct,
+          nextVariant,
+          current.light_color,
+        ),
       }));
       setCurrentStep(selectedVariant ? 2 : 1);
       setResult(null);
@@ -191,21 +204,27 @@ export function QuoteWizard({
       ...current,
       product_family: productFamily,
       variant: product.variants[0].value,
-      light_color:
-        productFamily === "letters" && product.variants[0].value === "non_lit"
-          ? "unlit"
-          : current.light_color === "unlit"
-            ? "warm_white"
-            : current.light_color,
+      light_color: normalizedLightColor(
+        productFamily,
+        product.variants[0].value,
+        current.light_color,
+      ),
     }));
     window.setTimeout(() => setCurrentStep(1), 120);
   }
 
   function chooseVariant(value: string) {
-    update("variant", value);
-    if (form.product_family === "letters") {
-      update("light_color", value === "non_lit" ? "unlit" : "warm_white");
-    }
+    setForm((current) => ({
+      ...current,
+      variant: value,
+      light_color: normalizedLightColor(
+        current.product_family,
+        value,
+        current.light_color,
+      ),
+    }));
+    setError(null);
+    setResult(null);
     window.setTimeout(() => setCurrentStep(2), 120);
   }
 
@@ -265,7 +284,8 @@ export function QuoteWizard({
       data.set("light_color", form.light_color);
       data.set("mounting", form.mounting);
       data.set("deadline", form.deadline);
-      data.set("need_installation", String(form.mounting !== "open"));
+      data.set("installation_service", form.installation_service);
+      data.set("need_installation", String(form.installation_service === "needed"));
       data.set("installation_scene", form.usage);
       data.set("installation_method", form.mounting);
       data.set("country", form.country);
@@ -274,7 +294,7 @@ export function QuoteWizard({
       data.set("delivery_contact", form.delivery_contact);
       data.set("customer_notes", form.customer_notes);
       data.set("locale", locale);
-      if (designFile) data.append("files", designFile);
+      designFiles.forEach((file) => data.append("files", file));
 
       const quote = await apiFetch<QuoteResponse>("/quotes", {
         method: "POST",
@@ -323,7 +343,7 @@ export function QuoteWizard({
             className="button outline"
             onClick={() => {
               setForm(initialState());
-              setDesignFile(null);
+              setDesignFiles([]);
               setCurrentStep(0);
               setResult(null);
             }}
@@ -443,13 +463,22 @@ export function QuoteWizard({
           <label className="upload-zone">
             <input
               type="file"
-              accept=".svg,.ai,.eps,.pdf,.png,.jpg,.jpeg"
-              onChange={(event) => setDesignFile(event.target.files?.[0] || null)}
+              accept=".svg,.ai,.eps,.pdf,.png,.jpg,.jpeg,.jfif,.webp,.gif,.bmp,.tif,.tiff,.heic,.heif"
+              multiple
+              onChange={(event) => setDesignFiles(Array.from(event.target.files || []))}
             />
             <span className="upload-icon" aria-hidden="true">
-              {designFile ? <Check /> : <FileUp />}
+              {designFiles.length > 0 ? <Check /> : <FileUp />}
             </span>
-            <strong>{designFile?.name || t.quote.fields.upload}</strong>
+            <strong>
+              {designFiles.length === 1
+                ? designFiles[0].name
+                : designFiles.length > 1
+                  ? locale === "de"
+                    ? `${designFiles.length} Dateien ausgewählt`
+                    : `${designFiles.length} files selected`
+                  : t.quote.fields.upload}
+            </strong>
             <small>{t.quote.fields.uploadHelp}</small>
           </label>
           <label className="font-field">
@@ -509,6 +538,24 @@ export function QuoteWizard({
                 onChange={(event) => update("mounting", event.target.value)}
               >
                 {mountingOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option[locale]}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              {t.quote.fields.installationService}
+              <select
+                value={form.installation_service}
+                onChange={(event) =>
+                  update(
+                    "installation_service",
+                    event.target.value as QuoteFormState["installation_service"],
+                  )
+                }
+              >
+                {installationServiceOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option[locale]}
                   </option>
@@ -738,6 +785,15 @@ function normalizeToMillimetres(value: number, unit: QuoteFormState["unit"]): nu
   if (unit === "m") return Math.round(value * 1000);
   if (unit === "cm") return Math.round(value * 10);
   return Math.round(value);
+}
+
+function normalizedLightColor(
+  product: ProductFamily,
+  variant: string,
+  current: string,
+): string {
+  if (product === "letters" && variant === "non_lit") return "unlit";
+  return current === "unlit" ? "warm_white" : current;
 }
 
 function productImage(product: ProductFamily): string {

@@ -29,7 +29,7 @@ DEFAULT_BY_PROJECT_TYPE = {
 
 def _matches_range(value: int | None, min_value: int | None, max_value: int | None) -> bool:
     if value is None:
-        return True
+        return min_value is None and max_value is None
     if min_value is not None and value < min_value:
         return False
     if max_value is not None and value > max_value:

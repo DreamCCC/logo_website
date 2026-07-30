@@ -454,6 +454,7 @@ function QuoteRequestDetails({ row }: { row: AdminRecord }) {
       title: "Installation",
       fields: [
         detail("Installation needed", formatBoolean(installation.needed)),
+        detail("Installation service", labelValue(installation.service)),
         detail("Installation scene", labelValue(installation.scene)),
         detail("Installation method", labelValue(installation.method)),
       ],
@@ -603,6 +604,8 @@ const readableValues: Record<string, string> = {
   direct_wall: "Directly on wall / facade",
   projecting_double_sided: "Projecting / double-sided",
   freestanding_special: "Freestanding / special build",
+  needed: "Installation by LumaSign",
+  not_needed: "No installation required",
   individual_letters: "Individual letters mounted separately",
   letters_on_metal_beam: "Letters mounted on a support bar",
   logo_backboard: "Logo mounted on a back panel",
