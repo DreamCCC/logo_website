@@ -12,6 +12,7 @@ from app.db import get_db
 from app.models import Quote, QuoteFile, User
 from app.schemas import QuotePublic, StartingPriceResponse
 from app.security import get_current_user, get_optional_user, hash_password
+from app.services.mail import try_send_quote_notification
 from app.services.pricing import calculate_starting_price
 
 router = APIRouter(prefix="/quotes", tags=["quotes"])
@@ -259,6 +260,8 @@ async def create_quote(
     quote = db.scalar(
         select(Quote).where(Quote.id == quote.id).options(selectinload(Quote.files))
     )
+    if quote is not None:
+        try_send_quote_notification(quote, settings)
     return QuotePublic.model_validate(quote)
 
 

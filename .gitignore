@@ -20,6 +20,7 @@ backend/.venv/
 !.env.example
 !frontend/.env.example
 !backend/.env.example
+.server-secrets
 
 # Uploads and generated files
 backend/uploads/

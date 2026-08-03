@@ -28,6 +28,14 @@ class Settings(BaseSettings):
     admin_email: str = Field(default="admin@ks-logo.de", validation_alias="ADMIN_EMAIL")
     admin_initial_password: str = Field(default="123456", validation_alias="ADMIN_INITIAL_PASSWORD")
 
+    smtp_host: str = Field(default="smtp.strato.de", validation_alias="SMTP_HOST")
+    smtp_port: int = Field(default=465, validation_alias="SMTP_PORT")
+    smtp_user: str = Field(default="data@lumasign.eu", validation_alias="SMTP_USER")
+    smtp_password: str = Field(default="", validation_alias="SMTP_PASSWORD")
+    smtp_from: str = Field(default="data@lumasign.eu", validation_alias="SMTP_FROM")
+    project_email: str = Field(default="projects@lumasign.eu", validation_alias="PROJECT_EMAIL")
+    smtp_enabled: bool = Field(default=True, validation_alias="SMTP_ENABLED")
+
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
 
