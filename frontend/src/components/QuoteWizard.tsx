@@ -121,6 +121,7 @@ export function QuoteWizard({
   const [form, setForm] = useState<QuoteFormState>(initialState);
   const [designFiles, setDesignFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [showFieldErrors, setShowFieldErrors] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<QuoteResponse | null>(null);
 
@@ -150,6 +151,7 @@ export function QuoteWizard({
       setCurrentStep(selectedVariant ? 2 : 1);
       setResult(null);
       setError(null);
+      setShowFieldErrors(false);
     }, 0);
     return () => window.clearTimeout(timer);
   }, [selectedProduct, selectedVariant, selectionVersion]);
@@ -158,6 +160,28 @@ export function QuoteWizard({
     setForm((current) => ({ ...current, [key]: value }));
     setError(null);
     setResult(null);
+  }
+
+  function fieldInvalid(field: keyof QuoteFormState): boolean {
+    if (!showFieldErrors) return false;
+    if (currentStep === 4) {
+      if (field === "width_value") return !(Number(form.width_value) > 0);
+      if (field === "light_color") return !form.light_color;
+      if (field === "mounting") return !form.mounting;
+      if (field === "installation_service") return !form.installation_service;
+    }
+    if (currentStep === 6) {
+      if (field === "country") return !form.country.trim();
+      if (field === "city_postal") return form.city_postal.trim().length < 3;
+      if (field === "delivery_company") return form.delivery_company.trim().length < 2;
+      if (field === "delivery_contact") return !contactLooksValid(form.delivery_contact);
+    }
+    return false;
+  }
+
+  function invalidClass(field: keyof QuoteFormState, extra?: string): string | undefined {
+    const classes = [extra, fieldInvalid(field) ? "is-invalid" : undefined].filter(Boolean);
+    return classes.length ? classes.join(" ") : undefined;
   }
 
   function chooseProduct(productFamily: ProductFamily) {
@@ -215,9 +239,11 @@ export function QuoteWizard({
 
   function goNext() {
     if (!stepIsValid(currentStep)) {
+      setShowFieldErrors(true);
       setError(t.quote.required);
       return;
     }
+    setShowFieldErrors(false);
     setCurrentStep((step) => Math.min(step + 1, steps.length - 1));
     setError(null);
   }
@@ -225,9 +251,11 @@ export function QuoteWizard({
   async function handleFinalSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!stepIsValid(6)) {
+      setShowFieldErrors(true);
       setError(t.quote.required);
       return;
     }
+    setShowFieldErrors(false);
     await submitQuote();
   }
 
@@ -307,6 +335,7 @@ export function QuoteWizard({
               setCurrentStep(0);
               setResult(null);
               setError(null);
+              setShowFieldErrors(false);
             }}
           >
             {t.quote.anotherRequest}
@@ -465,9 +494,11 @@ export function QuoteWizard({
                 type="number"
                 min="1"
                 step="1"
+                className={invalidClass("width_value")}
                 value={form.width_value}
                 onChange={(event) => update("width_value", event.target.value)}
                 placeholder={t.quote.fields.widthPlaceholder}
+                aria-invalid={fieldInvalid("width_value")}
                 required
               />
             </label>
@@ -485,9 +516,10 @@ export function QuoteWizard({
             <label>
               {t.quote.fields.light}
               <select
-                className={form.light_color ? undefined : "is-placeholder"}
+                className={invalidClass("light_color", form.light_color ? undefined : "is-placeholder")}
                 value={form.light_color}
                 onChange={(event) => update("light_color", event.target.value)}
+                aria-invalid={fieldInvalid("light_color")}
                 required
               >
                 <option value="">{t.quote.pleaseChoose}</option>
@@ -501,9 +533,10 @@ export function QuoteWizard({
             <label>
               {t.quote.fields.mounting}
               <select
-                className={form.mounting ? undefined : "is-placeholder"}
+                className={invalidClass("mounting", form.mounting ? undefined : "is-placeholder")}
                 value={form.mounting}
                 onChange={(event) => update("mounting", event.target.value)}
+                aria-invalid={fieldInvalid("mounting")}
                 required
               >
                 <option value="">{t.quote.pleaseChoose}</option>
@@ -517,7 +550,10 @@ export function QuoteWizard({
             <label>
               {t.quote.fields.installationService}
               <select
-                className={form.installation_service ? undefined : "is-placeholder"}
+                className={invalidClass(
+                  "installation_service",
+                  form.installation_service ? undefined : "is-placeholder",
+                )}
                 value={form.installation_service}
                 onChange={(event) =>
                   update(
@@ -525,6 +561,7 @@ export function QuoteWizard({
                     event.target.value as QuoteFormState["installation_service"],
                   )
                 }
+                aria-invalid={fieldInvalid("installation_service")}
                 required
               >
                 <option value="">{t.quote.pleaseChoose}</option>
@@ -564,39 +601,53 @@ export function QuoteWizard({
             <label>
               {t.quote.fields.country}
               <input
+                className={invalidClass("country")}
                 value={form.country}
                 onChange={(event) => update("country", event.target.value)}
                 placeholder={t.quote.fields.countryPlaceholder}
+                aria-invalid={fieldInvalid("country")}
                 required
               />
             </label>
             <label>
               {t.quote.fields.city}
               <input
+                className={invalidClass("city_postal")}
                 value={form.city_postal}
                 onChange={(event) => update("city_postal", event.target.value)}
                 placeholder={t.quote.fields.cityPlaceholder}
+                aria-invalid={fieldInvalid("city_postal")}
                 required
               />
             </label>
             <label>
               {t.quote.fields.deliveryCompany}
               <input
+                className={invalidClass("delivery_company")}
                 value={form.delivery_company}
                 onChange={(event) => update("delivery_company", event.target.value)}
                 placeholder={t.quote.fields.companyPlaceholder}
                 minLength={2}
+                aria-invalid={fieldInvalid("delivery_company")}
                 required
               />
             </label>
             <label>
               {t.quote.fields.deliveryContact}
               <input
+                className={invalidClass("delivery_contact")}
                 value={form.delivery_contact}
                 onChange={(event) => update("delivery_contact", event.target.value)}
                 placeholder={t.quote.fields.contactPlaceholder}
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                aria-invalid={fieldInvalid("delivery_contact")}
                 required
               />
+              <small className={fieldInvalid("delivery_contact") ? "is-invalid-hint" : undefined}>
+                {t.quote.fields.contactEmailHint}
+              </small>
             </label>
           </div>
         </fieldset>
@@ -608,6 +659,7 @@ export function QuoteWizard({
             onClick={() => {
               setCurrentStep((step) => Math.max(step - 1, 0));
               setError(null);
+              setShowFieldErrors(false);
             }}
           >
             {t.quote.back}
@@ -629,7 +681,7 @@ export function QuoteWizard({
             </button>
           )}
         </div>
-        <p className="form-note" role="status">
+        <p className={error ? "form-note form-note-error" : "form-note"} role="status">
           {error || ""}
         </p>
       </form>
@@ -638,10 +690,7 @@ export function QuoteWizard({
 }
 
 function contactLooksValid(value: string): boolean {
-  const trimmed = value.trim();
-  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
-  const phoneOk = /^\+?[0-9\s().-]{7,}$/.test(trimmed);
-  return emailOk || phoneOk;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
 
 function normalizeToMillimetres(value: number, unit: QuoteFormState["unit"]): number {

@@ -1322,6 +1322,24 @@ footer span {
   margin: 8px auto 0;
 }
 
+.field-grid label small {
+  font-weight: 500;
+  color: #6b716c;
+  line-height: 1.45;
+}
+
+.field-grid label small.is-invalid-hint {
+  color: #c62828;
+}
+
+input.is-invalid,
+select.is-invalid,
+textarea.is-invalid {
+  border-color: #d64545;
+  background: #fff7f7;
+  box-shadow: 0 0 0 1px rgba(214, 69, 69, 0.25);
+}
+
 .wizard-step textarea {
   width: min(360px, 100%);
   min-height: 118px;
@@ -1404,6 +1422,10 @@ textarea {
   margin: 0;
   color: #4f8b25;
   font-weight: 820;
+}
+
+.form-note-error {
+  color: #c62828;
 }
 
 .image-modal {

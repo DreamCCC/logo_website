@@ -34,3 +34,6 @@ uploads/
 # Logs
 *.log
 npm-debug.log*
+
+# Handover packages (generated locally)
+logo_website-handover-*.zip
