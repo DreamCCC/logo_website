@@ -101,12 +101,17 @@ def send_customer_confirmation(quote: Quote, settings: Settings, customer_email:
 
     message = EmailMessage()
     message["Subject"] = f"Wir haben Ihre Anfrage erhalten – {quote.quote_number}"
-    message["From"] = formataddr(("LumaSign Europe", settings.smtp_from))
+    message["From"] = formataddr(("LumaSign Europe", settings.project_email))
     message["To"] = customer_email
     message["Reply-To"] = settings.project_email
     message.set_content(body)
 
-    _send_message(message, settings)
+    _send_message(
+        message,
+        settings,
+        username=settings.project_email,
+        password=settings.smtp_password,
+    )
     logger.info("Customer confirmation sent for %s to %s", quote.quote_number, customer_email)
     return True
 
@@ -130,7 +135,13 @@ def _smtp_ready(settings: Settings) -> bool:
     return True
 
 
-def _send_message(message: EmailMessage, settings: Settings) -> None:
+def _send_message(
+    message: EmailMessage,
+    settings: Settings,
+    *,
+    username: str | None = None,
+    password: str | None = None,
+) -> None:
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL(
         settings.smtp_host,
@@ -138,5 +149,5 @@ def _send_message(message: EmailMessage, settings: Settings) -> None:
         context=context,
         timeout=30,
     ) as server:
-        server.login(settings.smtp_user, settings.smtp_password)
+        server.login(username or settings.smtp_user, password or settings.smtp_password)
         server.send_message(message)
