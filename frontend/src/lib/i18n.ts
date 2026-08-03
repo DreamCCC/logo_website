@@ -127,8 +127,6 @@ export const copy = {
         companyPlaceholder: "Studio Linden",
         deliveryContact: "Email address",
         contactPlaceholder: "name@company.de",
-        contactEmailHint:
-          "Enter the email address where we should send your quote",
         widthPlaceholder: "e.g. 180",
       },
       contactLines: ["Mon–Fri 09:00–17:00", "projects@lumasign.eu", "A logo, photo and dimensions are enough to start"],
@@ -283,8 +281,6 @@ export const copy = {
         companyPlaceholder: "Studio Linden",
         deliveryContact: "E-Mail-Adresse",
         contactPlaceholder: "name@company.de",
-        contactEmailHint:
-          "Geben Sie die E-Mail-Adresse ein, an die wir Ihnen ein Angebot senden sollen",
         widthPlaceholder: "z. B. 180",
       },
       contactLines: ["Mo.–Fr. 09:00–17:00", "projects@lumasign.eu", "Logo, Foto und Maße reichen für den Start"],

@@ -645,9 +645,6 @@ export function QuoteWizard({
                 aria-invalid={fieldInvalid("delivery_contact")}
                 required
               />
-              <small className={fieldInvalid("delivery_contact") ? "is-invalid-hint" : undefined}>
-                {t.quote.fields.contactEmailHint}
-              </small>
             </label>
           </div>
         </fieldset>
