@@ -48,6 +48,22 @@ type TabConfig = {
 const PAGE_SIZE = 10;
 const PRIMARY_ADMIN_EMAIL = "admin@ks-logo.de";
 
+type QuoteStatus = "new" | "in_progress" | "completed";
+
+const quoteStatusOptions: Array<{ value: QuoteStatus; label: string }> = [
+  { value: "new", label: "New" },
+  { value: "in_progress", label: "In progress" },
+  { value: "completed", label: "Completed" },
+];
+
+function normalizeQuoteStatus(value: unknown): QuoteStatus {
+  const status = String(value || "new").toLowerCase();
+  if (status === "submitted" || status === "new") return "new";
+  if (status === "in_progress") return "in_progress";
+  if (status === "completed" || status === "done") return "completed";
+  return "new";
+}
+
 const tabs: TabConfig[] = [
   {
     key: "users",
@@ -143,13 +159,14 @@ const tabs: TabConfig[] = [
 export default function AdminPage() {
   const [me, setMe] = useState<AdminUser | null>(null);
   const [summary, setSummary] = useState<Summary | null>(null);
-  const [activeTab, setActiveTab] = useState<TabKey>("users");
+  const [activeTab, setActiveTab] = useState<TabKey>("quotes");
   const [page, setPage] = useState(1);
   const [data, setData] = useState<PageResponse<AdminRecord> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [openQuoteId, setOpenQuoteId] = useState<number | null>(null);
 
   const activeConfig = useMemo(
     () => tabs.find((tab) => tab.key === activeTab) || tabs[0],
@@ -199,10 +216,41 @@ export default function AdminPage() {
     }
   }
 
+  async function updateQuoteStatus(quoteId: number, nextStatus: QuoteStatus) {
+    setNotice(null);
+    try {
+      await apiFetch(`/admin/quotes/${quoteId}/status`, {
+        method: "PATCH",
+        body: JSON.stringify({ status: nextStatus }),
+      });
+      setNotice("Quote status updated.");
+      setRefreshKey((value) => value + 1);
+    } catch (err) {
+      setNotice(err instanceof Error ? err.message : "Failed to update quote status");
+    }
+  }
+
+  async function deleteQuote(quoteId: number, quoteNumber: string) {
+    const confirmed = window.confirm(
+      `Delete completed quote ${quoteNumber}? This cannot be undone.`,
+    );
+    if (!confirmed) return;
+    setNotice(null);
+    try {
+      await apiFetch(`/admin/quotes/${quoteId}`, { method: "DELETE" });
+      setNotice(`Quote ${quoteNumber} deleted.`);
+      if (openQuoteId === quoteId) setOpenQuoteId(null);
+      setRefreshKey((value) => value + 1);
+    } catch (err) {
+      setNotice(err instanceof Error ? err.message : "Failed to delete quote");
+    }
+  }
+
   function switchTab(nextTab: TabKey) {
     setActiveTab(nextTab);
     setPage(1);
     setNotice(null);
+    setOpenQuoteId(null);
   }
 
   if (error) {
@@ -226,10 +274,9 @@ export default function AdminPage() {
         <div className="ls-page-heading">
           <div>
             <div className="eyebrow">LumaSign Europe Admin</div>
-            <h1>Database dashboard</h1>
+            <h1>Quote management</h1>
             <p className="ls-muted ls-heading-copy">
-              View registered users, quote requests, uploaded file metadata and configurable content
-              with paginated queries.
+              Review customer requests by quote number, update progress, and remove completed items.
             </p>
           </div>
           <div className="ls-admin-identity">
@@ -295,19 +342,40 @@ export default function AdminPage() {
           {loading ? (
             <div className="ls-admin-empty">Loading data...</div>
           ) : data && data.items.length > 0 ? (
-            <div className="ls-card-grid">
-              {data.items.map((row, index) => (
-                <RecordCard
-                  key={String(row.id ?? row.quote_number ?? index)}
-                  row={row}
-                  recordType={activeTab}
-                  columns={activeConfig.columns}
-                  canManageAdmins={canManageAdmins}
-                  showAdminActions={activeTab === "users"}
-                  onSetAdminRole={setAdminRole}
-                />
-              ))}
-            </div>
+            activeTab === "quotes" ? (
+              <div className="ls-quote-list">
+                {data.items.map((row, index) => {
+                  const quoteId = typeof row.id === "number" ? row.id : null;
+                  return (
+                    <QuoteListItem
+                      key={String(row.id ?? row.quote_number ?? index)}
+                      row={row}
+                      open={quoteId !== null && openQuoteId === quoteId}
+                      onToggle={() => {
+                        if (quoteId === null) return;
+                        setOpenQuoteId((current) => (current === quoteId ? null : quoteId));
+                      }}
+                      onStatusChange={updateQuoteStatus}
+                      onDelete={deleteQuote}
+                    />
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="ls-card-grid">
+                {data.items.map((row, index) => (
+                  <RecordCard
+                    key={String(row.id ?? row.quote_number ?? index)}
+                    row={row}
+                    recordType={activeTab}
+                    columns={activeConfig.columns}
+                    canManageAdmins={canManageAdmins}
+                    showAdminActions={activeTab === "users"}
+                    onSetAdminRole={setAdminRole}
+                  />
+                ))}
+              </div>
+            )
           ) : (
             <div className="ls-admin-empty">No data yet.</div>
           )}
@@ -319,7 +387,6 @@ export default function AdminPage() {
 
 function RecordCard({
   row,
-  recordType,
   columns,
   canManageAdmins,
   showAdminActions,
@@ -374,8 +441,71 @@ function RecordCard({
           )}
         </div>
       )}
+    </article>
+  );
+}
 
-      {recordType === "quotes" && <QuoteRequestDetails row={row} />}
+function QuoteListItem({
+  row,
+  open,
+  onToggle,
+  onStatusChange,
+  onDelete,
+}: {
+  row: AdminRecord;
+  open: boolean;
+  onToggle: () => void;
+  onStatusChange: (quoteId: number, status: QuoteStatus) => void;
+  onDelete: (quoteId: number, quoteNumber: string) => void;
+}) {
+  const quoteId = typeof row.id === "number" ? row.id : null;
+  const quoteNumber = String(row.quote_number || "—");
+  const status = normalizeQuoteStatus(row.status);
+  const delivery = toRecord(toRecord(row.form_payload).delivery);
+  const contact = delivery.contact || getValue(toRecord(row.user), "email") || "—";
+
+  return (
+    <article className={open ? "ls-quote-list-item open" : "ls-quote-list-item"}>
+      <div className="ls-quote-list-row">
+        <button type="button" className="ls-quote-list-main" onClick={onToggle}>
+          <strong>{quoteNumber}</strong>
+          <span className={`ls-status-pill ls-status-${status}`}>
+            {quoteStatusOptions.find((option) => option.value === status)?.label || "New"}
+          </span>
+          <span className="ls-muted">{formatValue(row.created_at)}</span>
+          <span className="ls-muted ls-quote-list-contact">{formatValue(contact)}</span>
+          <span className="ls-quote-list-toggle">{open ? "Hide" : "Open"}</span>
+        </button>
+        <div className="ls-quote-list-controls" onClick={(event) => event.stopPropagation()}>
+          <label>
+            Status
+            <select
+              value={status}
+              disabled={quoteId === null}
+              onChange={(event) => {
+                if (quoteId === null) return;
+                onStatusChange(quoteId, event.target.value as QuoteStatus);
+              }}
+            >
+              {quoteStatusOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          {status === "completed" && quoteId !== null && (
+            <button
+              type="button"
+              className="button outline"
+              onClick={() => onDelete(quoteId, quoteNumber)}
+            >
+              Delete
+            </button>
+          )}
+        </div>
+      </div>
+      {open && <QuoteRequestDetails row={row} />}
     </article>
   );
 }
@@ -415,7 +545,7 @@ function QuoteRequestDetails({ row }: { row: AdminRecord }) {
         ),
         detail("Variant", labelValue(product.variant)),
         detail("Usage", labelValue(product.usage ?? installation.scene)),
-        detail("Status", row.status),
+        detail("Status", labelValue(normalizeQuoteStatus(row.status))),
         detail("Indicative starting price", row.indicative_price_label),
       ],
     },
@@ -606,6 +736,10 @@ const readableValues: Record<string, string> = {
   freestanding_special: "Freestanding / special build",
   needed: "Installation by LumaSign",
   not_needed: "No installation required",
+  new: "New",
+  in_progress: "In progress",
+  completed: "Completed",
+  submitted: "New",
   individual_letters: "Individual letters mounted separately",
   letters_on_metal_beam: "Letters mounted on a support bar",
   logo_backboard: "Logo mounted on a back panel",

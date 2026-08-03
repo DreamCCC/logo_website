@@ -236,7 +236,7 @@ async def create_quote(
     quote = Quote(
         quote_number=f"TEMP-{uuid4().hex[:12]}",
         user_id=owner.id,
-        status="submitted",
+        status="new",
         project_type=resolved_product_family,
         indicative_price=price,
         indicative_price_label=label,

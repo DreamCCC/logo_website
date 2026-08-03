@@ -110,6 +110,10 @@ class AdminUserRoleUpdate(BaseModel):
     is_admin: bool
 
 
+class AdminQuoteStatusUpdate(BaseModel):
+    status: str
+
+
 class AdminQuoteUser(BaseModel):
     id: int
     email: EmailStr

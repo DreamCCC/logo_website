@@ -1,3 +1,6 @@
+from datetime import datetime
+from pathlib import Path
+from shutil import rmtree
 from typing import Any, TypeVar
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -13,6 +16,7 @@ from app.schemas import (
     AdminProductPublic,
     AdminQuoteFilePublic,
     AdminQuotePublic,
+    AdminQuoteStatusUpdate,
     AdminStartingPriceRulePublic,
     AdminSummary,
     AdminUserPublic,
@@ -24,6 +28,9 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 
 ModelT = TypeVar("ModelT")
 SchemaT = TypeVar("SchemaT", bound=BaseModel)
+
+QUOTE_STATUSES = {"new", "in_progress", "completed"}
+LEGACY_STATUS_MAP = {"submitted": "new"}
 
 
 @router.get("/summary", response_model=AdminSummary)
@@ -86,7 +93,7 @@ def list_quotes(
     db: Session = Depends(get_db),
     _: User = Depends(get_current_admin_user),
 ) -> dict[str, Any]:
-    return _page(
+    payload = _page(
         db,
         select(Quote)
         .options(selectinload(Quote.user), selectinload(Quote.files))
@@ -96,6 +103,72 @@ def list_quotes(
         page,
         page_size,
     )
+    for item in payload["items"]:
+        normalized = _normalize_quote_status(item.status)
+        if normalized != item.status:
+            item.status = normalized
+    return payload
+
+
+@router.patch("/quotes/{quote_id}/status", response_model=AdminQuotePublic)
+def update_quote_status(
+    quote_id: int,
+    payload: AdminQuoteStatusUpdate,
+    db: Session = Depends(get_db),
+    _: User = Depends(get_current_admin_user),
+) -> AdminQuotePublic:
+    quote = db.scalar(
+        select(Quote)
+        .where(Quote.id == quote_id)
+        .options(selectinload(Quote.user), selectinload(Quote.files))
+    )
+    if not quote:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Quote not found")
+
+    next_status = _normalize_quote_status(payload.status)
+    if next_status not in QUOTE_STATUSES:
+        raise HTTPException(
+            status_code=400,
+            detail="Status must be one of: new, in_progress, completed",
+        )
+
+    quote.status = next_status
+    if next_status == "completed" and quote.quoted_at is None:
+        quote.quoted_at = datetime.utcnow()
+    db.commit()
+    db.refresh(quote)
+    result = AdminQuotePublic.model_validate(quote)
+    result.status = _normalize_quote_status(result.status)
+    return result
+
+
+@router.delete("/quotes/{quote_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_quote(
+    quote_id: int,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+    _: User = Depends(get_current_admin_user),
+) -> None:
+    quote = db.scalar(
+        select(Quote)
+        .where(Quote.id == quote_id)
+        .options(selectinload(Quote.files))
+    )
+    if not quote:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Quote not found")
+
+    current_status = _normalize_quote_status(quote.status)
+    if current_status != "completed":
+        raise HTTPException(
+            status_code=400,
+            detail="Only completed quotes can be deleted",
+        )
+
+    upload_dir = Path(settings.upload_dir) / str(quote.id)
+    db.delete(quote)
+    db.commit()
+    if upload_dir.exists():
+        rmtree(upload_dir, ignore_errors=True)
 
 
 @router.get("/quote-files")
@@ -168,6 +241,11 @@ def list_starting_price_rules(
 
 def _count(db: Session, model: type[ModelT]) -> int:
     return db.scalar(select(func.count()).select_from(model)) or 0
+
+
+def _normalize_quote_status(value: str | None) -> str:
+    status_value = (value or "new").strip().lower()
+    return LEGACY_STATUS_MAP.get(status_value, status_value)
 
 
 def _page(

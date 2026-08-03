@@ -660,10 +660,124 @@ textarea:focus-visible {
 }
 
 .ls-admin-quote-details {
-  margin-top: 18px;
+  margin-top: 4px;
   padding: 18px;
   background: #111315;
   border-radius: 7px;
+}
+
+.ls-quote-list {
+  display: grid;
+  gap: 12px;
+}
+
+.ls-quote-list-item {
+  display: grid;
+  gap: 0;
+  padding: 14px 16px;
+  background: #fff;
+  border: 1px solid #e4e7e1;
+  border-radius: 10px;
+}
+
+.ls-quote-list-item.open {
+  gap: 16px;
+  border-color: #c9d0c4;
+  box-shadow: 0 10px 28px rgba(17, 17, 17, 0.05);
+}
+
+.ls-quote-list-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+}
+
+.ls-quote-list-main {
+  display: grid;
+  grid-template-columns: minmax(140px, 0.9fr) auto minmax(120px, 0.7fr) minmax(140px, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  padding: 0;
+  color: inherit;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.ls-quote-list-main strong {
+  font-size: 1.02rem;
+  font-weight: 850;
+}
+
+.ls-quote-list-contact {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ls-quote-list-toggle {
+  color: #111;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ls-quote-list-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: end;
+}
+
+.ls-quote-list-controls label {
+  display: grid;
+  gap: 6px;
+  min-width: 150px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6b6b6b;
+}
+
+.ls-quote-list-controls select {
+  min-height: 40px;
+  padding: 8px 10px;
+  color: #111;
+  font: inherit;
+  background: #f9faf7;
+  border: 1px solid #d2d7d3;
+  border-radius: 7px;
+}
+
+.ls-status-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0.03em;
+}
+
+.ls-status-new {
+  color: #7a4d00;
+  background: #ffe7b3;
+}
+
+.ls-status-in_progress {
+  color: #0b4f8a;
+  background: #d7ebff;
+}
+
+.ls-status-completed {
+  color: #1f6b2c;
+  background: #d9f5de;
 }
 
 .ls-admin-quote-details > .eyebrow {
@@ -884,6 +998,20 @@ textarea:focus-visible {
   .ls-admin-detail-grid,
   .ls-admin-files {
     grid-template-columns: 1fr;
+  }
+
+  .ls-quote-list-row,
+  .ls-quote-list-main {
+    grid-template-columns: 1fr;
+  }
+
+  .ls-quote-list-controls {
+    width: 100%;
+  }
+
+  .ls-quote-list-controls label,
+  .ls-quote-list-controls .button {
+    width: 100%;
   }
 
   .ls-admin-files-section {
