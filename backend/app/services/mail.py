@@ -79,6 +79,10 @@ def send_customer_confirmation(quote: Quote, settings: Settings, customer_email:
     if not _smtp_ready(settings):
         return False
 
+    payload = quote.form_payload if isinstance(quote.form_payload, dict) else {}
+    product = payload.get("product") if isinstance(payload.get("product"), dict) else {}
+    delivery = payload.get("delivery") if isinstance(payload.get("delivery"), dict) else {}
+
     body = "\n".join(
         [
             "Wir haben Ihre Anfrage erhalten. Der zuständige Kundenbetreuer wird sich innerhalb von 24 Stunden mit Ihnen in Verbindung setzen. Sollten Sie Fragen haben, können Sie uns über die folgenden Kontaktdaten erreichen:",
@@ -86,6 +90,12 @@ def send_customer_confirmation(quote: Quote, settings: Settings, customer_email:
             "Telefon: 0211 9846 3093",
             "",
             f"Vorgangsnummer: {quote.quote_number}",
+            f"Produkt: {product.get('family') or quote.project_type or '—'}",
+            f"Variante: {product.get('variant') or '—'}",
+            f"Kontakt: {delivery.get('contact') or '—'}",
+            f"Firma: {delivery.get('company') or '—'}",
+            f"Ort: {delivery.get('cityPostal') or delivery.get('country') or '—'}",
+            f"Richtpreis: {quote.indicative_price_label or '—'}",
         ]
     )
 
